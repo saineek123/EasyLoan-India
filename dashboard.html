@@ -20,7 +20,8 @@
             --primary-dark: #0d1445;
             --primary-light: #3949ab;
             --gradient: linear-gradient(135deg, #1a237e, #283593, #3949ab);
-            --secondary: #ff6f00;
+            --gradient-green: linear-gradient(135deg, #1b5e20, #2e7d32, #388e3c);
+            --gradient-orange: linear-gradient(135deg, #e65100, #f57c00, #fb8c00);
             --success: #2e7d32;
             --danger: #c62828;
             --warning: #f57c00;
@@ -107,7 +108,7 @@
 
         .app-header .header-top .actions {
             display: flex;
-            gap: 16px;
+            gap: 12px;
             align-items: center;
         }
 
@@ -134,14 +135,15 @@
             right: -2px;
             background: var(--danger);
             color: white;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            width: 18px;
+            min-width: 18px;
             height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 4px;
         }
 
         .app-header .user-greeting {
@@ -222,7 +224,6 @@
             padding: 20px 16px 80px;
         }
 
-        /* Section Header */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -247,17 +248,29 @@
            BALANCE CARD
            ============================================================ */
         .balance-card {
-            background: var(--gradient);
             border-radius: var(--radius);
             padding: 24px 20px;
             margin-bottom: 20px;
             color: white;
             box-shadow: 0 4px 20px rgba(26, 35, 126, 0.25);
+            position: relative;
+            overflow: hidden;
+            min-height: 160px;
+        }
+
+        .balance-card.bg-blue {
+            background: var(--gradient);
+        }
+        .balance-card.bg-green {
+            background: var(--gradient-green);
+        }
+        .balance-card.bg-orange {
+            background: var(--gradient-orange);
         }
 
         .balance-card .balance-label {
             font-size: 13px;
-            opacity: 0.8;
+            opacity: 0.85;
         }
 
         .balance-card .balance-amount {
@@ -268,7 +281,7 @@
         }
 
         .balance-card .balance-amount span {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 400;
             opacity: 0.7;
         }
@@ -288,6 +301,15 @@
             opacity: 0.7;
         }
 
+        .balance-card .card-pattern {
+            position: absolute;
+            right: -20px;
+            top: -20px;
+            font-size: 120px;
+            opacity: 0.08;
+            pointer-events: none;
+        }
+
         /* ============================================================
            LOAN STATUS CARDS
            ============================================================ */
@@ -304,6 +326,11 @@
             padding: 14px 10px;
             text-align: center;
             box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .loan-status-grid .status-item:active {
+            transform: scale(0.95);
         }
 
         .loan-status-grid .status-item .number {
@@ -440,14 +467,14 @@
            ============================================================ */
         .empty-state {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
             background: white;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
         }
 
         .empty-state i {
-            font-size: 56px;
+            font-size: 60px;
             color: #e0e0e0;
             margin-bottom: 12px;
         }
@@ -494,7 +521,7 @@
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 0 calc(8px + var(--safe-bottom));
+            padding: 6px 0 calc(6px + var(--safe-bottom));
             box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
             z-index: 1000;
             border-top: 1px solid rgba(0, 0, 0, 0.04);
@@ -538,16 +565,21 @@
             color: white;
             font-size: 9px;
             font-weight: 700;
-            width: 16px;
+            min-width: 16px;
             height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 0 4px;
         }
 
         .bottom-nav .nav-item .nav-label {
             font-size: 9px;
+        }
+
+        .bottom-nav .nav-item .nav-icon-wrapper {
+            position: relative;
         }
 
         /* ============================================================
@@ -615,16 +647,97 @@
         }
 
         /* ============================================================
-           LOGOUT BUTTON
+           LOGOUT DIALOG
            ============================================================ */
-        .logout-btn {
-            background: none;
-            border: none;
-            color: var(--danger);
+        .dialog-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        .dialog-overlay.show {
+            display: flex;
+        }
+
+        .dialog-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: dialogIn 0.3s ease;
+        }
+
+        @keyframes dialogIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .dialog-box i {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .dialog-box h3 {
+            color: var(--text-primary);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .dialog-box p {
+            color: var(--text-secondary);
             font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .dialog-box .dialog-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dialog-box .dialog-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
             font-weight: 600;
             cursor: pointer;
-            padding: 4px 8px;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+
+        .dialog-box .dialog-buttons .btn-cancel {
+            border: 2px solid #e0e0e0;
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .dialog-box .dialog-buttons .btn-cancel:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .dialog-box .dialog-buttons .btn-danger {
+            border: none;
+            background: var(--danger);
+            color: white;
+        }
+
+        .dialog-box .dialog-buttons .btn-danger:hover {
+            background: #b71c1c;
         }
 
         /* ============================================================
@@ -671,6 +784,12 @@
 
             .bottom-nav .nav-item i {
                 font-size: 18px;
+            }
+
+            .balance-card .card-pattern {
+                font-size: 80px;
+                right: -10px;
+                top: -10px;
             }
         }
 
@@ -719,6 +838,21 @@
     <div id="toast" class="toast"></div>
 
     <!-- ============================================================
+    LOGOUT DIALOG
+    ============================================================ -->
+    <div class="dialog-overlay" id="logoutDialog">
+        <div class="dialog-box">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);"></i>
+            <h3>Logout?</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="dialog-buttons">
+                <button class="btn-cancel" onclick="closeDialog()">Cancel</button>
+                <button class="btn-danger" onclick="confirmLogout()">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================
     STATUS BAR
     ============================================================ -->
     <div class="status-bar">
@@ -738,9 +872,9 @@
             <div class="actions">
                 <button onclick="window.location.href='notifications.html'">
                     <i class="fa-solid fa-bell"></i>
-                    <span class="badge" id="notifBadge">0</span>
+                    <span class="badge" id="notifBadge" style="display:none;">0</span>
                 </button>
-                <button onclick="showLogoutConfirm()">
+                <button onclick="showDialog()">
                     <i class="fa-solid fa-sign-out-alt"></i>
                 </button>
             </div>
@@ -782,9 +916,10 @@
     ============================================================ -->
     <div class="main-content">
 
-        <!-- Balance Card -->
-        <div class="balance-card">
-            <div class="balance-label">Total Loan Amount</div>
+        <!-- Balance Card - Real Data -->
+        <div class="balance-card bg-blue" id="balanceCard">
+            <div class="card-pattern"><i class="fa-solid fa-coins"></i></div>
+            <div class="balance-label">Total Sanctioned Amount</div>
             <div class="balance-amount" id="totalLoanAmount">₹0 <span>sanctioned</span></div>
             <div class="balance-stats">
                 <div class="stat">
@@ -792,7 +927,7 @@
                     <div class="stat-label">Active Loans</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="paidEMI">₹0</div>
+                    <div class="stat-value" id="emiPaid">₹0</div>
                     <div class="stat-label">EMI Paid</div>
                 </div>
                 <div class="stat">
@@ -802,35 +937,35 @@
             </div>
         </div>
 
-        <!-- Loan Status -->
+        <!-- Loan Status - Real Data -->
         <div class="loan-status-grid">
-            <div class="status-item">
+            <div class="status-item" onclick="window.location.href='my-loans.html'">
                 <div class="number total" id="totalLoans">0</div>
                 <div class="label">Total</div>
             </div>
-            <div class="status-item">
+            <div class="status-item" onclick="window.location.href='my-loans.html?filter=pending'">
                 <div class="number pending" id="pendingLoans">0</div>
                 <div class="label">Pending</div>
             </div>
-            <div class="status-item">
+            <div class="status-item" onclick="window.location.href='my-loans.html?filter=approved'">
                 <div class="number approved" id="approvedLoans">0</div>
                 <div class="label">Approved</div>
             </div>
-            <div class="status-item">
+            <div class="status-item" onclick="window.location.href='my-loans.html?filter=rejected'">
                 <div class="number rejected" id="rejectedLoans">0</div>
                 <div class="label">Rejected</div>
             </div>
         </div>
 
-        <!-- Recent Loans -->
+        <!-- Recent Loans - Real Data -->
         <div class="section-header">
             <h3>📋 Recent Loans</h3>
             <a href="my-loans.html">View All →</a>
         </div>
 
         <div class="loan-list" id="loanList">
-            <!-- Dynamic -->
-            <div class="loader"><i class="fa-solid fa-spinner"></i></div>
+            <!-- Dynamic from Firebase -->
+            <div class="loader"><i class="fa-solid fa-spinner"></i> Loading...</div>
         </div>
 
     </div>
@@ -846,35 +981,23 @@
         <a href="my-loans.html" class="nav-item">
             <i class="fa-solid fa-file-invoice"></i>
             <span class="nav-label">My Loans</span>
+            <span class="nav-badge" id="navPendingBadge" style="display:none;">0</span>
         </a>
         <a href="apply-loan.html" class="nav-item" style="position:relative;">
-            <i class="fa-solid fa-plus-circle" style="font-size:28px;color:var(--primary);"></i>
-            <span class="nav-label">Apply</span>
+            <span class="nav-icon-wrapper">
+                <i class="fa-solid fa-plus-circle" style="font-size:28px;color:var(--primary);"></i>
+            </span>
+            <span class="nav-label" style="color:var(--primary);font-weight:700;">Apply</span>
         </a>
         <a href="profile.html" class="nav-item">
             <i class="fa-solid fa-user"></i>
             <span class="nav-label">Profile</span>
         </a>
-        <a href="#" class="nav-item" onclick="showLogoutConfirm()">
+        <a href="#" class="nav-item" onclick="showDialog()">
             <i class="fa-solid fa-sign-out-alt"></i>
             <span class="nav-label">Logout</span>
         </a>
     </nav>
-
-    <!-- ============================================================
-    LOGOUT CONFIRM DIALOG
-    ============================================================ -->
-    <div id="logoutDialog" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
-        <div style="background:white;border-radius:20px;padding:30px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <i class="fa-solid fa-triangle-exclamation" style="font-size:48px;color:var(--danger);margin-bottom:16px;"></i>
-            <h3 style="color:var(--text-primary);font-size:20px;margin-bottom:8px;">Logout?</h3>
-            <p style="color:var(--text-secondary);font-size:14px;margin-bottom:24px;">Are you sure you want to logout from your account?</p>
-            <div style="display:flex;gap:12px;">
-                <button onclick="closeLogout()" style="flex:1;padding:12px;border:2px solid #e0e0e0;border-radius:10px;background:transparent;font-weight:600;cursor:pointer;">Cancel</button>
-                <button onclick="confirmLogout()" style="flex:1;padding:12px;border:none;border-radius:10px;background:var(--danger);color:white;font-weight:600;cursor:pointer;">Logout</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         // ============================================================
@@ -898,6 +1021,7 @@
         // ============================================================
         let userLoans = [];
         let currentUser = null;
+        let emiPaidTotal = 0;
 
         // ============================================================
         // TOAST
@@ -927,18 +1051,18 @@
         setInterval(updateTime, 30000);
 
         // ============================================================
-        // LOGOUT DIALOG
+        // DIALOG
         // ============================================================
-        function showLogoutConfirm() {
-            document.getElementById('logoutDialog').style.display = 'flex';
+        function showDialog() {
+            document.getElementById('logoutDialog').classList.add('show');
         }
 
-        function closeLogout() {
-            document.getElementById('logoutDialog').style.display = 'none';
+        function closeDialog() {
+            document.getElementById('logoutDialog').classList.remove('show');
         }
 
         function confirmLogout() {
-            closeLogout();
+            closeDialog();
             auth.signOut().then(() => {
                 showToast('✅ Logged out successfully', 'success');
                 setTimeout(() => { window.location.href = 'index.html'; }, 1000);
@@ -978,9 +1102,12 @@
         });
 
         // ============================================================
-        // LOAD LOANS
+        // LOAD LOANS - REAL DATA FROM FIREBASE
         // ============================================================
         function loadUserLoans(uid) {
+            const loanList = document.getElementById('loanList');
+            loanList.innerHTML = '<div class="loader"><i class="fa-solid fa-spinner"></i> Loading...</div>';
+
             database.ref('loans').orderByChild('userId').equalTo(uid).once('value')
                 .then((snapshot) => {
                     userLoans = [];
@@ -990,49 +1117,116 @@
                         userLoans.push(data);
                     });
 
+                    // Sort by newest first
                     userLoans.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                    updateStats();
+                    updateAllStats();
                     renderLoans();
                 })
                 .catch((error) => {
+                    loanList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-circle-exclamation" style="color:var(--danger);"></i>
+                            <h4>Error Loading Data</h4>
+                            <p>${error.message}</p>
+                            <button class="btn-primary" onclick="location.reload()">Try Again</button>
+                        </div>
+                    `;
                     showToast('❌ Error loading loans: ' + error.message, 'error');
                 });
         }
 
         // ============================================================
-        // UPDATE STATS
+        // UPDATE ALL STATS - REAL CALCULATIONS
         // ============================================================
-        function updateStats() {
+        function updateAllStats() {
+            // Basic counts
             const total = userLoans.length;
             const pending = userLoans.filter(l => l.status === 'pending').length;
             const approved = userLoans.filter(l => l.status === 'approved' || l.status === 'disbursed').length;
             const rejected = userLoans.filter(l => l.status === 'rejected').length;
-            const totalAmount = userLoans.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
+
+            // Total amount sanctioned
+            const totalAmount = userLoans.reduce((sum, l) => {
+                if (l.status === 'approved' || l.status === 'disbursed') {
+                    return sum + (l.loanAmount || 0);
+                }
+                return sum;
+            }, 0);
 
             // Active loans (approved/disbursed)
             const active = userLoans.filter(l => l.status === 'approved' || l.status === 'disbursed');
 
-            // EMI calculations (mock)
-            const totalEMI = active.reduce((sum, l) => sum + (l.emiAmount || 0), 0);
-            const nextEMI = active.length > 0 ? active[0].emiAmount || 0 : 0;
+            // EMI calculations
+            let totalEMI = 0;
+            let totalPaidEMI = 0;
 
+            // For each active loan, calculate EMI
+            active.forEach(loan => {
+                const amount = loan.loanAmount || 0;
+                const tenure = loan.tenure || 12;
+                const rate = 10.5 / 12 / 100;
+
+                if (amount > 0) {
+                    const emi = amount * rate * Math.pow(1 + rate, tenure) / (Math.pow(1 + rate, tenure) - 1);
+                    const realEMI = Math.round(emi);
+                    totalEMI += realEMI;
+
+                    // Calculate how many EMIs paid (mock - based on months elapsed)
+                    if (loan.createdAt) {
+                        const monthsElapsed = Math.floor((Date.now() - loan.createdAt) / (30 * 24 * 60 * 60 * 1000));
+                        const paidMonths = Math.min(monthsElapsed, tenure);
+                        totalPaidEMI += realEMI * paidMonths;
+                    }
+                }
+            });
+
+            // Next EMI - if any active loan
+            let nextEMI = 0;
+            if (active.length > 0) {
+                const firstLoan = active[0];
+                const amount = firstLoan.loanAmount || 0;
+                const tenure = firstLoan.tenure || 12;
+                const rate = 10.5 / 12 / 100;
+                if (amount > 0) {
+                    const emi = amount * rate * Math.pow(1 + rate, tenure) / (Math.pow(1 + rate, tenure) - 1);
+                    nextEMI = Math.round(emi);
+                }
+            }
+
+            // Store for later use
+            emiPaidTotal = totalPaidEMI;
+
+            // Update UI
             document.getElementById('totalLoans').textContent = total;
             document.getElementById('pendingLoans').textContent = pending;
             document.getElementById('approvedLoans').textContent = approved;
             document.getElementById('rejectedLoans').textContent = rejected;
-            document.getElementById('totalLoanAmount').innerHTML = '₹' + totalAmount.toLocaleString() +
-                ' <span>sanctioned</span>';
+
+            document.getElementById('totalLoanAmount').innerHTML = '₹' + totalAmount.toLocaleString() + ' <span>sanctioned</span>';
             document.getElementById('activeLoans').textContent = active.length;
-            document.getElementById('paidEMI').textContent = '₹' + (totalEMI * 0.6).toLocaleString();
+            document.getElementById('emiPaid').textContent = '₹' + totalPaidEMI.toLocaleString();
             document.getElementById('nextEMI').textContent = '₹' + nextEMI.toLocaleString();
 
-            // Notification badge (mock)
-            document.getElementById('notifBadge').textContent = pending > 0 ? pending : 0;
+            // Pending badge for notification
+            if (pending > 0) {
+                document.getElementById('notifBadge').style.display = 'flex';
+                document.getElementById('notifBadge').textContent = pending;
+            } else {
+                document.getElementById('notifBadge').style.display = 'none';
+            }
+
+            // Pending badge in bottom nav
+            if (pending > 0) {
+                document.getElementById('navPendingBadge').style.display = 'flex';
+                document.getElementById('navPendingBadge').textContent = pending;
+            } else {
+                document.getElementById('navPendingBadge').style.display = 'none';
+            }
         }
 
         // ============================================================
-        // RENDER LOANS
+        // RENDER LOANS - REAL DATA
         // ============================================================
         function renderLoans() {
             const container = document.getElementById('loanList');
@@ -1090,19 +1284,19 @@
             // Show "View All" if more than 4 loans
             if (userLoans.length > 4) {
                 container.innerHTML += `
-                    <a href="my-loans.html" style="text-align:center;padding:12px;color:var(--primary);font-weight:600;text-decoration:none;display:block;">
-                        View All ${userLoans.length} Loans →
+                    <a href="my-loans.html" style="text-align:center;padding:12px;color:var(--primary);font-weight:600;text-decoration:none;display:block;background:white;border-radius:var(--radius-sm);box-shadow:var(--shadow);margin-top:4px;">
+                        View All ${userLoans.length} Loans <i class="fa-solid fa-arrow-right"></i>
                     </a>
                 `;
             }
         }
 
         // ============================================================
-        // REAL-TIME UPDATES (New loans/status changes)
+        // REAL-TIME UPDATES - Firebase Listener
         // ============================================================
         auth.onAuthStateChanged((user) => {
             if (user) {
-                // Listen for changes in loans
+                // Listen for real-time changes in loans
                 database.ref('loans').orderByChild('userId').equalTo(user.uid).on('value', (snapshot) => {
                     userLoans = [];
                     snapshot.forEach((child) => {
@@ -1111,9 +1305,35 @@
                         userLoans.push(data);
                     });
                     userLoans.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-                    updateStats();
+
+                    updateAllStats();
                     renderLoans();
                 });
+            }
+        });
+
+        // ============================================================
+        // PULL TO REFRESH - Swipe down to refresh
+        // ============================================================
+        let startY = 0;
+        let isRefreshing = false;
+
+        document.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].pageY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const y = e.touches[0].pageY;
+            const diff = y - startY;
+            if (diff > 80 && window.scrollY === 0 && !isRefreshing) {
+                isRefreshing = true;
+                showToast('🔄 Refreshing...', 'info');
+                if (currentUser) {
+                    loadUserLoans(currentUser.uid);
+                }
+                setTimeout(() => {
+                    isRefreshing = false;
+                }, 2000);
             }
         });
     </script>

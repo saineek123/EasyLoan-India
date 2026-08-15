@@ -5,41 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard | EasyLoan India</title>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
-    <!-- Chart.js for Charts -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
     <style>
-        /* ============================================================
-           ROOT VARIABLES
-           ============================================================ */
         :root {
-            --primary: #1565c0;
-            --primary-dark: #0d47a1;
-            --primary-light: #42a5f5;
-            --secondary: #ff6f00;
+            --primary: #1a237e;
+            --primary-dark: #0d1445;
             --success: #2e7d32;
             --danger: #c62828;
             --warning: #f57c00;
             --info: #0288d1;
-            --bg: #f0f4f8;
-            --card-bg: #ffffff;
             --text-primary: #1a237e;
             --text-secondary: #455a64;
+            --bg: #f5f7fa;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --radius: 16px;
             --transition: all 0.3s ease;
         }
 
-        /* ============================================================
-           RESET & BASE
-           ============================================================ */
         * {
             margin: 0;
             padding: 0;
@@ -49,392 +36,182 @@
         body {
             font-family: 'Segoe UI', 'Poppins', sans-serif;
             background: var(--bg);
-            min-height: 100vh;
             color: var(--text-secondary);
-        }
-
-        /* ============================================================
-           SCROLLBAR
-           ============================================================ */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #e8eaf6;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 10px;
-        }
-
-        /* ============================================================
-           SIDEBAR
-           ============================================================ */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 260px;
-            height: 100vh;
-            background: linear-gradient(180deg, #0d47a1, #1565c0);
-            color: white;
-            padding: 25px 20px;
-            z-index: 1000;
-            transition: var(--transition);
-            overflow-y: auto;
-        }
-
-        .sidebar .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 40px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-
-        .sidebar .brand i {
-            font-size: 32px;
-        }
-
-        .sidebar .brand h1 {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .sidebar .brand small {
-            display: block;
-            font-size: 11px;
-            opacity: 0.7;
-            font-weight: 300;
-        }
-
-        .sidebar .menu-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            opacity: 0.5;
-            margin: 25px 0 12px 0;
-        }
-
-        .sidebar .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            transition: var(--transition);
-            cursor: pointer;
-            margin-bottom: 4px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .sidebar .nav-item:hover {
-            background: rgba(255, 255, 255, 0.12);
-            color: white;
-        }
-
-        .sidebar .nav-item.active {
-            background: rgba(255, 255, 255, 0.18);
-            color: white;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .sidebar .nav-item i {
-            width: 22px;
-            font-size: 18px;
-            text-align: center;
-        }
-
-        .sidebar .nav-item .badge {
-            margin-left: auto;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-        }
-
-        .sidebar .nav-item .badge.danger {
-            background: var(--danger);
-        }
-
-        .sidebar .nav-item .badge.success {
-            background: var(--success);
-        }
-
-        .sidebar .user-profile {
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .sidebar .user-profile .avatar {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .sidebar .user-profile .info h4 {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .sidebar .user-profile .info small {
-            font-size: 12px;
-            opacity: 0.6;
-        }
-
-        /* ============================================================
-           MAIN CONTENT
-           ============================================================ */
-        .main-content {
-            margin-left: 260px;
-            padding: 25px 30px 40px;
             min-height: 100vh;
         }
 
-        /* ============================================================
-           TOP HEADER
-           ============================================================ */
-        .top-header {
+        .navbar {
+            background: white;
+            padding: 16px 30px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 15px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .top-header .page-title h2 {
-            font-size: 26px;
-            color: var(--text-primary);
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .navbar .brand i {
+            font-size: 28px;
+        }
+        .navbar .brand h1 {
+            font-size: 22px;
             font-weight: 700;
         }
 
-        .top-header .page-title p {
+        .navbar .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .navbar .nav-links a {
+            text-decoration: none;
             color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
             font-size: 14px;
-            margin-top: 4px;
         }
 
-        .top-header .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
+        .navbar .nav-links a:hover {
+            color: var(--primary);
         }
 
-        .top-header .header-actions .search-box {
-            display: flex;
-            align-items: center;
+        .navbar .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .welcome-section {
             background: white;
-            border-radius: 50px;
-            padding: 8px 18px;
+            border-radius: var(--radius);
+            padding: 30px;
             box-shadow: var(--shadow);
-            border: 1px solid #e8eaf6;
-        }
-
-        .top-header .header-actions .search-box input {
-            border: none;
-            outline: none;
-            padding: 6px 10px;
-            font-size: 14px;
-            width: 180px;
-            background: transparent;
-        }
-
-        .top-header .header-actions .search-box i {
-            color: #999;
-        }
-
-        .top-header .header-actions .btn-primary {
-            background: var(--primary);
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #1a237e, #283593);
             color: white;
+        }
+
+        .welcome-section h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .welcome-section p {
+            opacity: 0.85;
+            margin-top: 6px;
+        }
+
+        .welcome-section .btn-primary {
+            background: white;
+            color: var(--primary);
+            padding: 10px 28px;
             border: none;
-            padding: 10px 22px;
             border-radius: 50px;
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 14px;
+            margin-top: 12px;
+            display: inline-block;
+            text-decoration: none;
         }
 
-        .top-header .header-actions .btn-primary:hover {
-            background: var(--primary-dark);
+        .welcome-section .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(21, 101, 192, 0.35);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
         }
 
-        .top-header .header-actions .btn-outline {
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid #ddd;
-            padding: 10px 18px;
-            border-radius: 50px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .top-header .header-actions .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-
-        /* ============================================================
-           STATS CARDS
-           ============================================================ */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
 
         .stat-card {
-            background: var(--card-bg);
+            background: white;
             border-radius: var(--radius);
-            padding: 22px 25px;
+            padding: 20px 25px;
             box-shadow: var(--shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            text-align: center;
         }
 
         .stat-card .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            margin-bottom: 14px;
-        }
-
-        .stat-card .stat-icon.blue {
-            background: #e3f2fd;
-            color: var(--primary);
-        }
-        .stat-card .stat-icon.green {
-            background: #e8f5e9;
-            color: var(--success);
-        }
-        .stat-card .stat-icon.orange {
-            background: #fff3e0;
-            color: var(--warning);
-        }
-        .stat-card .stat-icon.red {
-            background: #ffebee;
-            color: var(--danger);
-        }
-        .stat-card .stat-icon.purple {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-
-        .stat-card .stat-label {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
+            font-size: 28px;
+            margin-bottom: 8px;
         }
 
         .stat-card .stat-value {
             font-size: 28px;
             font-weight: 700;
             color: var(--text-primary);
-            margin: 4px 0 2px;
         }
 
-        .stat-card .stat-change {
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .stat-card .stat-change.up {
-            color: var(--success);
-        }
-        .stat-card .stat-change.down {
-            color: var(--danger);
-        }
-
-        /* ============================================================
-           CHARTS SECTION
-           ============================================================ */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .chart-card {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 25px;
-            box-shadow: var(--shadow);
-        }
-
-        .chart-card .chart-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .chart-card .chart-header h3 {
-            font-size: 16px;
-            color: var(--text-primary);
-        }
-
-        .chart-card .chart-header select {
-            padding: 6px 12px;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            background: white;
+        .stat-card .stat-label {
             font-size: 13px;
-            outline: none;
+            color: var(--text-secondary);
         }
 
-        .chart-card canvas {
-            max-height: 260px;
-            max-width: 100%;
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        /* ============================================================
-           RECENT LOANS TABLE
-           ============================================================ */
+        .quick-action {
+            background: white;
+            border-radius: var(--radius);
+            padding: 25px 20px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+            text-decoration: none;
+            color: var(--text-secondary);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .quick-action i {
+            font-size: 30px;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .quick-action span {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
         .table-section {
-            background: var(--card-bg);
+            background: white;
             border-radius: var(--radius);
             padding: 25px;
             box-shadow: var(--shadow);
-            margin-bottom: 30px;
         }
 
         .table-section .table-header {
@@ -449,17 +226,6 @@
         .table-section .table-header h3 {
             font-size: 18px;
             color: var(--text-primary);
-        }
-
-        .table-section .table-header a {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .table-section .table-header a:hover {
-            text-decoration: underline;
         }
 
         .table-wrapper {
@@ -477,27 +243,25 @@
         }
 
         table thead th {
-            padding: 14px 16px;
+            padding: 12px 16px;
             text-align: left;
             font-weight: 600;
             color: var(--text-secondary);
             font-size: 12px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-bottom: 2px solid #e8eaf6;
         }
 
         table tbody td {
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
         }
 
         table tbody tr:hover {
             background: #f8f9ff;
         }
 
-        table tbody .status {
+        .status-badge {
             padding: 4px 14px;
             border-radius: 50px;
             font-size: 12px;
@@ -505,113 +269,26 @@
             display: inline-block;
         }
 
-        table tbody .status.approved {
-            background: #e8f5e9;
-            color: var(--success);
-        }
-
-        table tbody .status.pending {
+        .status-badge.pending {
             background: #fff3e0;
             color: var(--warning);
         }
-
-        table tbody .status.rejected {
+        .status-badge.approved {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+        .status-badge.disbursed {
+            background: #e3f2fd;
+            color: var(--info);
+        }
+        .status-badge.rejected {
             background: #ffebee;
             color: var(--danger);
         }
 
-        table tbody .status.disbursed {
-            background: #e3f2fd;
-            color: var(--info);
-        }
-
-        table tbody .action-btn {
-            padding: 5px 12px;
-            border-radius: 6px;
-            border: none;
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        table tbody .action-btn.view {
-            background: #e3f2fd;
-            color: var(--primary);
-        }
-
-        table tbody .action-btn.view:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* ============================================================
-           QUICK ACTIONS
-           ============================================================ */
-        .quick-actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 18px;
-            margin-bottom: 30px;
-        }
-
-        .quick-action {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            padding: 22px 20px;
-            text-align: center;
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            cursor: pointer;
-            border: none;
-            text-decoration: none;
-            color: var(--text-secondary);
-        }
-
-        .quick-action:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        }
-
-        .quick-action i {
-            font-size: 32px;
-            color: var(--primary);
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .quick-action span {
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .quick-action small {
-            display: block;
-            font-size: 12px;
-            color: #999;
-            margin-top: 4px;
-        }
-
-        /* ============================================================
-           LOADING
-           ============================================================ */
-        .loader {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 60vh;
-        }
-
-        .loader i {
-            font-size: 48px;
-            color: var(--primary);
-        }
-
-        /* ============================================================
-           TOAST
-           ============================================================ */
         .toast {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             padding: 16px 24px;
             border-radius: 12px;
@@ -623,105 +300,56 @@
             transition: transform 0.4s ease;
             max-width: 360px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .toast.show {
             transform: translateX(0);
         }
-
         .toast.success {
             background: var(--success);
         }
-
         .toast.error {
             background: var(--danger);
         }
-
         .toast.info {
             background: var(--info);
         }
 
-        /* ============================================================
-           MOBILE SIDEBAR TOGGLE
-           ============================================================ */
-        .sidebar-toggle {
-            display: none;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-size: 18px;
-            cursor: pointer;
-        }
-
-        .sidebar-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 999;
-        }
-
-        /* ============================================================
-           RESPONSIVE
-           ============================================================ */
-        @media(max-width: 1024px) {
-            .charts-grid {
-                grid-template-columns: 1fr;
-            }
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #999;
         }
 
         @media(max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 280px;
-            }
-
-            .sidebar.open {
-                transform: translateX(0);
-            }
-
-            .sidebar-overlay.show {
-                display: block;
-            }
-
-            .sidebar-toggle {
-                display: block;
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 20px 16px 30px;
-            }
-
-            .top-header {
+            .navbar .nav-links {
+                display: none;
                 flex-direction: column;
-                align-items: stretch;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                gap: 15px;
             }
-
-            .top-header .header-actions {
-                flex-wrap: wrap;
+            .navbar .nav-links.open {
+                display: flex;
             }
-
-            .top-header .header-actions .search-box {
-                flex: 1;
-            }
-
-            .top-header .header-actions .search-box input {
-                width: 100%;
+            .navbar .mobile-toggle {
+                display: block;
             }
 
             .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr 1fr;
             }
 
-            .quick-actions-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .stat-card .stat-value {
-                font-size: 22px;
+            .quick-actions {
+                grid-template-columns: 1fr 1fr;
             }
         }
 
@@ -729,309 +357,128 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
-            .quick-actions-grid {
-                grid-template-columns: 1fr 1fr;
+            .quick-actions {
+                grid-template-columns: 1fr;
             }
-
-            .top-header .page-title h2 {
-                font-size: 20px;
+            .welcome-section h1 {
+                font-size: 22px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- ============================================================
-    TOAST NOTIFICATION
-    ============================================================ -->
     <div id="toast" class="toast"></div>
 
-    <!-- ============================================================
-    SIDEBAR OVERLAY (Mobile)
-    ============================================================ -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <!-- ============================================================
-    SIDEBAR
-    ============================================================ -->
-    <aside class="sidebar" id="sidebar">
-        <div class="brand">
+    <nav class="navbar">
+        <a href="index.html" class="brand">
             <i class="fa-solid fa-building-columns"></i>
             <div>
                 <h1>EasyLoan</h1>
-                <small>India's Trusted Lender</small>
+            </div>
+        </a>
+
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html" style="color:var(--primary);font-weight:600;">Dashboard</a>
+            <a href="apply-loan.html">Apply Loan</a>
+            <a href="my-loans.html">My Loans</a>
+            <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+            <a href="#" id="logoutBtn" style="color:var(--danger);">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Welcome -->
+        <div class="welcome-section">
+            <h1 id="welcomeName">👋 Welcome back!</h1>
+            <p id="welcomeMessage">Here's your loan dashboard overview.</p>
+            <a href="apply-loan.html" class="btn-primary">
+                <i class="fa-solid fa-plus"></i> Apply for a Loan
+            </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="totalLoans">0</div>
+                <div class="stat-label">Total Loans</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-value" id="approvedLoans">0</div>
+                <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-value" id="pendingLoans">0</div>
+                <div class="stat-label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value" id="totalAmount">₹0</div>
+                <div class="stat-label">Total Amount</div>
             </div>
         </div>
 
-        <div class="menu-label">Main Menu</div>
-
-        <a href="#" class="nav-item active">
-            <i class="fa-solid fa-gauge-high"></i>
-            Dashboard
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-file-invoice"></i>
-            My Loans
-            <span class="badge" id="loanBadge">3</span>
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-plus-circle"></i>
-            Apply Loan
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-credit-card"></i>
-            Payments
-        </a>
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-bell"></i>
-            Notifications
-            <span class="badge danger">5</span>
-        </a>
-
-        <div class="menu-label">Settings</div>
-
-        <a href="#" class="nav-item">
-            <i class="fa-solid fa-user-gear"></i>
-            Profile
-        </a>
-        <a href="#" class="nav-item" id="logoutBtn">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            Logout
-        </a>
-
-        <div class="user-profile">
-            <div class="avatar" id="userAvatar">R</div>
-            <div class="info">
-                <h4 id="userName">User</h4>
-                <small id="userEmail">user@email.com</small>
-            </div>
-        </div>
-    </aside>
-
-    <!-- ============================================================
-    MAIN CONTENT
-    ============================================================ -->
-    <main class="main-content">
-
-        <!-- Top Header -->
-        <div class="top-header">
-            <div class="page-title">
-                <h2>📊 Dashboard</h2>
-                <p id="greetingMsg">Welcome back! Here's your loan overview.</p>
-            </div>
-            <div class="header-actions">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-                <div class="search-box">
-                    <i class="fa-solid fa-search"></i>
-                    <input type="text" placeholder="Search loans..." id="searchInput">
-                </div>
-                <button class="btn-primary" onclick="openApplyLoan()">
-                    <i class="fa-solid fa-plus"></i> Apply Loan
-                </button>
-                <button class="btn-outline" onclick="refreshData()">
-                    <i class="fa-solid fa-rotate"></i>
-                </button>
-            </div>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="apply-loan.html" class="quick-action">
+                <i class="fa-solid fa-file-circle-plus"></i>
+                <span>New Loan</span>
+            </a>
+            <a href="my-loans.html" class="quick-action">
+                <i class="fa-solid fa-file-invoice"></i>
+                <span>My Loans</span>
+            </a>
+            <a href="profile.html" class="quick-action">
+                <i class="fa-solid fa-user-edit"></i>
+                <span>Update Profile</span>
+            </a>
+            <a href="loan-calculator.html" class="quick-action">
+                <i class="fa-solid fa-calculator"></i>
+                <span>EMI Calculator</span>
+            </a>
         </div>
 
-        <!-- Loading State -->
-        <div class="loader" id="loader">
-            <i class="fa-solid fa-spinner fa-spin"></i>
-        </div>
-
-        <!-- Dashboard Content -->
-        <div id="dashboardMain" style="display:none;">
-
-            <!-- Stats Cards -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon blue"><i class="fa-solid fa-file-invoice"></i></div>
-                    <div class="stat-label">Total Loans</div>
-                    <div class="stat-value" id="totalLoans">0</div>
-                    <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> 12% this month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon green"><i class="fa-solid fa-circle-check"></i></div>
-                    <div class="stat-label">Active Loans</div>
-                    <div class="stat-value" id="activeLoans">0</div>
-                    <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> 8% this month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon orange"><i class="fa-solid fa-clock"></i></div>
-                    <div class="stat-label">Pending Applications</div>
-                    <div class="stat-value" id="pendingLoans">0</div>
-                    <div class="stat-change down"><i class="fa-solid fa-arrow-down"></i> 2% this month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon purple"><i class="fa-solid fa-circle-dollar"></i></div>
-                    <div class="stat-label">Total Disbursed</div>
-                    <div class="stat-value" id="totalAmount">₹0</div>
-                    <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> 18% this month</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon red"><i class="fa-solid fa-hand-holding-dollar"></i></div>
-                    <div class="stat-label">EMI Due</div>
-                    <div class="stat-value" id="emiDue">₹0</div>
-                    <div class="stat-change down"><i class="fa-solid fa-arrow-down"></i> Pay by 25th</div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="quick-actions-grid">
-                <a href="#" class="quick-action" onclick="openApplyLoan()">
-                    <i class="fa-solid fa-file-circle-plus"></i>
-                    <span>New Loan</span>
-                    <small>Apply in 2 mins</small>
-                </a>
-                <a href="#" class="quick-action">
-                    <i class="fa-solid fa-eye"></i>
-                    <span>My Loans</span>
-                    <small>View all loans</small>
-                </a>
-                <a href="#" class="quick-action">
-                    <i class="fa-solid fa-credit-card"></i>
-                    <span>Pay EMI</span>
-                    <small>Quick payment</small>
-                </a>
-                <a href="#" class="quick-action">
-                    <i class="fa-solid fa-chart-line"></i>
-                    <span>Credit Score</span>
-                    <small>Check your score</small>
-                </a>
-                <a href="#" class="quick-action">
-                    <i class="fa-solid fa-headset"></i>
-                    <span>Support</span>
-                    <small>24/7 assistance</small>
+        <!-- Recent Loans -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3>📋 Recent Loan Applications</h3>
+                <a href="my-loans.html" style="color:var(--primary);font-weight:600;text-decoration:none;">
+                    View All →
                 </a>
             </div>
-
-            <!-- Charts -->
-            <div class="charts-grid">
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3><i class="fa-solid fa-chart-area" style="color:var(--primary);"></i> Loan Trends</h3>
-                        <select id="chartFilter">
-                            <option value="6">Last 6 Months</option>
-                            <option value="12" selected>Last 12 Months</option>
-                            <option value="24">Last 2 Years</option>
-                        </select>
-                    </div>
-                    <canvas id="loanChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <div class="chart-header">
-                        <h3><i class="fa-solid fa-chart-pie" style="color:var(--primary);"></i> Loan Distribution</h3>
-                    </div>
-                    <canvas id="pieChart"></canvas>
-                </div>
-            </div>
-
-            <!-- Recent Loans Table -->
-            <div class="table-section">
-                <div class="table-header">
-                    <h3><i class="fa-solid fa-list"></i> Recent Loan Applications</h3>
-                    <a href="#">View All →</a>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Loan ID</th>
-                                <th>Type</th>
-                                <th>Amount</th>
-                                <th>Duration</th>
-                                <th>Status</th>
-                                <th>Date</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="loanTableBody">
-                            <!-- Dynamic data from Firebase -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- EMI Schedule -->
-            <div class="table-section">
-                <div class="table-header">
-                    <h3><i class="fa-solid fa-calendar-check"></i> Upcoming EMI Payments</h3>
-                    <a href="#">View All →</a>
-                </div>
-                <div class="table-wrapper">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Loan ID</th>
-                                <th>EMI Amount</th>
-                                <th>Due Date</th>
-                                <th>Status</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="emiTableBody">
-                            <!-- Dynamic data from Firebase -->
-                        </tbody>
-                    </table>
-                </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Loan ID</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="recentLoansBody">
+                        <tr><td colspan="6" style="text-align:center;padding:30px;color:#999;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading...
+                        </td></tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
-    </main>
-
-    <!-- ============================================================
-    APPLY LOAN MODAL
-    ============================================================ -->
-    <div id="applyModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;">
-        <div style="background:white;border-radius:20px;padding:35px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-                <h2 style="color:var(--text-primary);">Apply for Loan</h2>
-                <button onclick="closeApplyLoan()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#999;">&times;</button>
-            </div>
-            <form id="applyLoanForm">
-                <div style="margin-bottom:15px;">
-                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:14px;">Loan Type</label>
-                    <select id="loanType" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;">
-                        <option value="personal">Personal Loan</option>
-                        <option value="home">Home Loan</option>
-                        <option value="car">Car Loan</option>
-                        <option value="education">Education Loan</option>
-                        <option value="business">Business Loan</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:15px;">
-                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:14px;">Loan Amount (₹)</label>
-                    <input type="number" id="loanAmount" placeholder="Enter amount" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;">
-                </div>
-                <div style="margin-bottom:15px;">
-                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:14px;">Tenure (Months)</label>
-                    <select id="loanTenure" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;">
-                        <option value="6">6 Months</option>
-                        <option value="12">12 Months</option>
-                        <option value="24">24 Months</option>
-                        <option value="36">36 Months</option>
-                        <option value="48">48 Months</option>
-                        <option value="60">60 Months</option>
-                    </select>
-                </div>
-                <div style="margin-bottom:20px;">
-                    <label style="display:block;font-weight:600;margin-bottom:5px;font-size:14px;">Purpose</label>
-                    <textarea id="loanPurpose" placeholder="Briefly describe why you need this loan" style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid #ddd;font-size:14px;outline:none;resize:vertical;min-height:60px;"></textarea>
-                </div>
-                <button type="submit" style="width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:var(--transition);">
-                    <i class="fa-solid fa-paper-plane"></i> Submit Application
-                </button>
-            </form>
-        </div>
     </div>
 
     <script>
-        // ============================================================
-        // FIREBASE CONFIGURATION
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCCSSnvJ1w9CGd68TAy9ZVH9Taw1J0-xdE",
             authDomain: "easyloan-india.firebaseapp.com",
@@ -1045,503 +492,133 @@
         const auth = firebase.auth();
         const database = firebase.database();
 
-        // ============================================================
-        // TOAST NOTIFICATION
-        // ============================================================
+        let userLoans = [];
+
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast ' + type + ' show';
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
-        }
-
-        // ============================================================
-        // SIDEBAR TOGGLE (Mobile)
-        // ============================================================
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-            overlay.classList.toggle('show');
-        });
-
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('show');
-        });
-
-        // ============================================================
-        // LOAN CHART
-        // ============================================================
-        let loanChart = null;
-        let pieChart = null;
-
-        function initCharts(data) {
-            // Line Chart - Loan Trends
-            const ctx = document.getElementById('loanChart').getContext('2d');
-
-            const months = data?.months || ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const amounts = data?.amounts || [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-
-            if (loanChart) {
-                loanChart.destroy();
-            }
-
-            loanChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: months,
-                    datasets: [{
-                        label: 'Loan Amount (₹)',
-                        data: amounts,
-                        borderColor: '#1565c0',
-                        backgroundColor: 'rgba(21, 101, 192, 0.08)',
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: '#1565c0',
-                        pointBorderColor: 'white',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return '₹' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return '₹' + (value / 1000) + 'k';
-                                }
-                            }
-                        },
-                        x: {
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-
-            // Pie Chart - Loan Distribution
-            const pieCtx = document.getElementById('pieChart').getContext('2d');
-
-            const pieData = data?.pieData || {
-                labels: ['Personal', 'Home', 'Car', 'Education', 'Business'],
-                values: [40, 25, 20, 10, 5]
+            const icons = {
+                success: 'fa-solid fa-check-circle',
+                error: 'fa-solid fa-exclamation-circle',
+                info: 'fa-solid fa-info-circle'
             };
-
-            if (pieChart) {
-                pieChart.destroy();
-            }
-
-            pieChart = new Chart(pieCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: pieData.labels,
-                    datasets: [{
-                        data: pieData.values,
-                        backgroundColor: ['#1565c0', '#42a5f5', '#ff6f00', '#2e7d32', '#7b1fa2'],
-                        borderWidth: 0,
-                        hoverOffset: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: {
-                                padding: 12,
-                                usePointStyle: true,
-                                pointStyle: 'circle',
-                                font: { size: 12 }
-                            }
-                        }
-                    },
-                    cutout: '65%'
-                }
-            });
+            toast.innerHTML = `<i class="${icons[type] || icons.info}"></i> ${message}`;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
-        // ============================================================
-        // LOAD USER & LOAN DATA
-        // ============================================================
-        function loadDashboardData(user) {
-            const loader = document.getElementById('loader');
-            const mainContent = document.getElementById('dashboardMain');
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
 
-            loader.style.display = 'flex';
-            mainContent.style.display = 'none';
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
 
-            // Load user profile
+            // Load user data
             database.ref('users/' + user.uid).once('value')
                 .then((snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        document.getElementById('userName').textContent = data.fullName || 'User';
-                        document.getElementById('userEmail').textContent = data.email || user.email;
-                        document.getElementById('userAvatar').textContent = (data.fullName || 'U')[0].toUpperCase();
-                        document.getElementById('greetingMsg').textContent =
-                            'Welcome back, ' + (data.fullName || 'User') + '! Here\'s your loan overview.';
+                        document.getElementById('welcomeName').textContent = '👋 Welcome back, ' + (data.fullName ||
+                            'User') + '!';
                     }
-                })
-                .catch((error) => {
-                    console.error('Error loading user:', error);
                 });
 
-            // Load loans from Firebase
-            database.ref('loans').orderByChild('userId').equalTo(user.uid).once('value')
+            loadUserLoans(user.uid);
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            auth.signOut().then(() => {
+                showToast('✅ Logged out', 'success');
+                setTimeout(() => { window.location.href = 'index.html'; }, 1000);
+            });
+        });
+
+        function loadUserLoans(uid) {
+            database.ref('loans').orderByChild('userId').equalTo(uid).once('value')
                 .then((snapshot) => {
-                    const loans = [];
+                    userLoans = [];
                     snapshot.forEach((child) => {
-                        loans.push({
-                            id: child.key,
-                            ...child.val()
-                        });
+                        const data = child.val();
+                        data.id = child.key;
+                        userLoans.push(data);
                     });
 
-                    // Update stats
-                    updateStats(loans);
-                    updateTable(loans);
-                    updateEMITable(loans);
-                    updateCharts(loans);
+                    // Sort by newest first
+                    userLoans.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
-                    // Update loan badge
-                    document.getElementById('loanBadge').textContent = loans.length;
-
+                    updateStats();
+                    renderRecentLoans();
                 })
                 .catch((error) => {
-                    console.error('Error loading loans:', error);
-                    showToast('Error loading loan data', 'error');
-                })
-                .finally(() => {
-                    loader.style.display = 'none';
-                    mainContent.style.display = 'block';
+                    showToast('❌ Error loading loans: ' + error.message, 'error');
                 });
         }
 
-        // ============================================================
-        // UPDATE STATS
-        // ============================================================
-        function updateStats(loans) {
-            const total = loans.length;
-            const active = loans.filter(l => l.status === 'approved' || l.status === 'disbursed').length;
-            const pending = loans.filter(l => l.status === 'pending').length;
-            const totalAmount = loans.reduce((sum, l) => sum + (l.amount || 0), 0);
-
-            // EMI Due - sum of pending EMI amounts
-            const emiDue = loans
-                .filter(l => l.status === 'approved' || l.status === 'disbursed')
-                .reduce((sum, l) => sum + (l.emiAmount || 0), 0);
+        function updateStats() {
+            const total = userLoans.length;
+            const approved = userLoans.filter(l => l.status === 'approved' || l.status === 'disbursed').length;
+            const pending = userLoans.filter(l => l.status === 'pending').length;
+            const totalAmount = userLoans.reduce((sum, l) => sum + (l.loanAmount || 0), 0);
 
             document.getElementById('totalLoans').textContent = total;
-            document.getElementById('activeLoans').textContent = active;
+            document.getElementById('approvedLoans').textContent = approved;
             document.getElementById('pendingLoans').textContent = pending;
             document.getElementById('totalAmount').textContent = '₹' + totalAmount.toLocaleString();
-            document.getElementById('emiDue').textContent = '₹' + emiDue.toLocaleString();
         }
 
-        // ============================================================
-        // UPDATE TABLE
-        // ============================================================
-        function updateTable(loans) {
-            const tbody = document.getElementById('loanTableBody');
-            const recent = loans.slice(-5).reverse();
+        function renderRecentLoans() {
+            const tbody = document.getElementById('recentLoansBody');
+            const recent = userLoans.slice(0, 5);
 
             if (recent.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align:center;padding:40px;color:#999;">
+                        <td colspan="6" style="text-align:center;padding:30px;color:#999;">
                             <i class="fa-solid fa-inbox" style="font-size:32px;display:block;margin-bottom:10px;"></i>
-                            No loan applications yet. Apply for your first loan!
+                            No loan applications yet.
+                            <br>
+                            <a href="apply-loan.html" style="color:var(--primary);font-weight:600;">Apply for your first loan</a>
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = recent.map((loan) => {
-                const statusColor = {
-                    'pending': 'pending',
-                    'approved': 'approved',
-                    'disbursed': 'disbursed',
-                    'rejected': 'rejected',
-                    'completed': 'approved'
-                }[loan.status] || 'pending';
-
+            tbody.innerHTML = recent.map(loan => {
+                const statusClass = loan.status || 'pending';
                 const statusLabel = {
                     'pending': '⏳ Pending',
                     'approved': '✅ Approved',
                     'disbursed': '💰 Disbursed',
-                    'rejected': '❌ Rejected',
-                    'completed': '✔️ Completed'
-                }[loan.status] || loan.status;
+                    'rejected': '❌ Rejected'
+                } [statusClass] || statusClass;
 
-                const date = loan.createdAt ? new Date(loan.createdAt).toLocaleDateString() : 'N/A';
+                const date = loan.createdAt ? new Date(loan.createdAt).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }) : 'N/A';
 
                 return `
                     <tr>
                         <td><strong>#${loan.id ? loan.id.substring(0, 8) : 'N/A'}</strong></td>
-                        <td>${loan.type || 'Personal'}</td>
-                        <td>₹${(loan.amount || 0).toLocaleString()}</td>
-                        <td>${loan.tenure || 12} Months</td>
-                        <td><span class="status ${statusColor}">${statusLabel}</span></td>
+                        <td>${loan.loanType || 'Personal'}</td>
+                        <td>₹${(loan.loanAmount || 0).toLocaleString()}</td>
+                        <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
                         <td>${date}</td>
                         <td>
-                            <button class="action-btn view" onclick="viewLoan('${loan.id}')">
-                                <i class="fa-solid fa-eye"></i> View
-                            </button>
+                            <a href="loan-details.html?id=${loan.id}" style="color:var(--primary);font-weight:600;text-decoration:none;">
+                                View
+                            </a>
                         </td>
                     </tr>
                 `;
             }).join('');
         }
-
-        // ============================================================
-        // UPDATE EMI TABLE
-        // ============================================================
-        function updateEMITable(loans) {
-            const tbody = document.getElementById('emiTableBody');
-            const emiLoans = loans.filter(l => l.status === 'approved' || l.status === 'disbursed');
-
-            if (emiLoans.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align:center;padding:30px;color:#999;">
-                            <i class="fa-solid fa-check-circle" style="color:var(--success);font-size:24px;display:block;margin-bottom:8px;"></i>
-                            No upcoming EMIs. Great job!
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-
-            tbody.innerHTML = emiLoans.slice(0, 4).map((loan) => {
-                const dueDate = loan.nextEMIDate ? new Date(loan.nextEMIDate).toLocaleDateString() : 'Pending';
-                const isOverdue = loan.nextEMIDate && new Date(loan.nextEMIDate) < new Date();
-
-                return `
-                    <tr>
-                        <td><strong>#${loan.id ? loan.id.substring(0, 8) : 'N/A'}</strong></td>
-                        <td>₹${(loan.emiAmount || 0).toLocaleString()}</td>
-                        <td>${dueDate}</td>
-                        <td>
-                            <span class="status ${isOverdue ? 'rejected' : 'pending'}">
-                                ${isOverdue ? '⏰ Overdue' : '📅 Upcoming'}
-                            </span>
-                        </td>
-                        <td>
-                            <button class="action-btn view" style="background:var(--success);color:white;" onclick="payEMI('${loan.id}')">
-                                <i class="fa-solid fa-credit-card"></i> Pay Now
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            }).join('');
-        }
-
-        // ============================================================
-        // UPDATE CHARTS
-        // ============================================================
-        function updateCharts(loans) {
-            // Generate monthly data
-            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-            const amounts = monthNames.map((_, i) => {
-                const monthLoans = loans.filter(l => {
-                    if (!l.createdAt) return false;
-                    const d = new Date(l.createdAt);
-                    return d.getMonth() === i;
-                });
-                return monthLoans.reduce((sum, l) => sum + (l.amount || 0), 0);
-            });
-
-            // Pie data
-            const types = ['personal', 'home', 'car', 'education', 'business'];
-            const typeLabels = ['Personal', 'Home', 'Car', 'Education', 'Business'];
-            const typeValues = types.map(t => {
-                return loans.filter(l => l.type === t).length;
-            });
-
-            initCharts({
-                months: monthNames,
-                amounts: amounts,
-                pieData: {
-                    labels: typeLabels,
-                    values: typeValues
-                }
-            });
-        }
-
-        // ============================================================
-        // VIEW LOAN
-        // ============================================================
-        function viewLoan(loanId) {
-            showToast('🔍 Viewing loan details: ' + loanId, 'info');
-            // You can open a modal or redirect to loan details page
-        }
-
-        // ============================================================
-        // PAY EMI
-        // ============================================================
-        function payEMI(loanId) {
-            showToast('💳 Redirecting to payment gateway...', 'info');
-            // Redirect to payment page
-            // window.location.href = 'payment.html?loanId=' + loanId;
-        }
-
-        // ============================================================
-        // APPLY LOAN
-        // ============================================================
-        function openApplyLoan() {
-            document.getElementById('applyModal').style.display = 'flex';
-        }
-
-        function closeApplyLoan() {
-            document.getElementById('applyModal').style.display = 'none';
-        }
-
-        document.getElementById('applyLoanForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const user = auth.currentUser;
-            if (!user) {
-                showToast('⚠️ Please login first', 'error');
-                return;
-            }
-
-            const type = document.getElementById('loanType').value;
-            const amount = parseInt(document.getElementById('loanAmount').value);
-            const tenure = parseInt(document.getElementById('loanTenure').value);
-            const purpose = document.getElementById('loanPurpose').value.trim();
-
-            if (!amount || amount < 1000) {
-                showToast('⚠️ Please enter a valid loan amount (min ₹1,000)', 'error');
-                return;
-            }
-
-            if (!purpose) {
-                showToast('⚠️ Please describe the purpose of the loan', 'error');
-                return;
-            }
-
-            const btn = this.querySelector('button[type="submit"]');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
-
-            const loanData = {
-                userId: user.uid,
-                userEmail: user.email,
-                type: type,
-                amount: amount,
-                tenure: tenure,
-                purpose: purpose,
-                status: 'pending',
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
-                emiAmount: Math.round((amount * 0.12 * Math.pow(1 + 0.12, tenure)) / (Math.pow(1 + 0.12, tenure) - 1) / 12),
-                nextEMIDate: null
-            };
-
-            database.ref('loans').push(loanData)
-                .then(() => {
-                    showToast('✅ Loan application submitted successfully!', 'success');
-                    closeApplyLoan();
-                    document.getElementById('applyLoanForm').reset();
-                    loadDashboardData(user);
-                })
-                .catch((error) => {
-                    console.error('Error submitting loan:', error);
-                    showToast('❌ Failed to submit application: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Submit Application';
-                });
-        });
-
-        // ============================================================
-        // REFRESH DATA
-        // ============================================================
-        function refreshData() {
-            const user = auth.currentUser;
-            if (user) {
-                showToast('🔄 Refreshing data...', 'info');
-                loadDashboardData(user);
-            }
-        }
-
-        // ============================================================
-        // SEARCH
-        // ============================================================
-        document.getElementById('searchInput').addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            const rows = document.querySelectorAll('#loanTableBody tr');
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(query) ? '' : 'none';
-            });
-        });
-
-        // ============================================================
-        // AUTH STATE OBSERVER
-        // ============================================================
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                loadDashboardData(user);
-            } else {
-                window.location.href = 'login.html';
-            }
-        });
-
-        // ============================================================
-        // LOGOUT
-        // ============================================================
-        document.getElementById('logoutBtn').addEventListener('click', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to logout?')) {
-                auth.signOut()
-                    .then(() => {
-                        showToast('✅ Logged out successfully', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'login.html';
-                        }, 1000);
-                    })
-                    .catch((error) => {
-                        showToast('❌ Error logging out: ' + error.message, 'error');
-                    });
-            }
-        });
-
-        // ============================================================
-        // CLOSE MODAL ON ESC
-        // ============================================================
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeApplyLoan();
-            }
-        });
-
-        // Click outside modal to close
-        document.getElementById('applyModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeApplyLoan();
-            }
-        });
     </script>
 
 </body>

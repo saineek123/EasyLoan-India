@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyLoan India - Trusted Loan Provider</title>
+    <title>EasyLoan India - Your Trusted Loan Partner</title>
 
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -17,24 +15,22 @@
            ROOT VARIABLES
            ============================================================ */
         :root {
-            --primary: #1565c0;
-            --primary-dark: #0d47a1;
-            --primary-light: #42a5f5;
-            --primary-gradient: linear-gradient(135deg, #1565c0, #0d47a1);
+            --primary: #1a237e;
+            --primary-dark: #0d1445;
+            --primary-light: #3949ab;
+            --gradient: linear-gradient(135deg, #1a237e, #283593, #3949ab);
             --secondary: #ff6f00;
             --success: #2e7d32;
             --danger: #c62828;
             --warning: #f57c00;
-            --info: #0288d1;
             --text-primary: #1a237e;
             --text-secondary: #455a64;
-            --text-light: #757575;
-            --bg: #f0f4f8;
+            --text-light: #78909c;
+            --bg: #f5f7fa;
             --white: #ffffff;
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
             --radius: 16px;
-            --radius-sm: 10px;
             --transition: all 0.3s ease;
             --max-width: 1200px;
         }
@@ -63,7 +59,7 @@
         }
 
         /* ============================================================
-           TOAST NOTIFICATION
+           TOAST
            ============================================================ */
         .toast {
             position: fixed;
@@ -87,7 +83,6 @@
         .toast.show {
             transform: translateX(0);
         }
-
         .toast.success {
             background: linear-gradient(135deg, #2e7d32, #1b5e20);
         }
@@ -97,10 +92,6 @@
         .toast.info {
             background: linear-gradient(135deg, #0288d1, #01579b);
         }
-        .toast.warning {
-            background: linear-gradient(135deg, #f57c00, #e65100);
-        }
-
         .toast i {
             font-size: 20px;
         }
@@ -125,35 +116,22 @@
             border-bottom: 1px solid rgba(0, 0, 0, 0.04);
         }
 
-        .navbar.scrolled {
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        }
-
         .navbar .brand {
             display: flex;
             align-items: center;
             gap: 12px;
             text-decoration: none;
-            color: var(--primary);
         }
 
         .navbar .brand i {
             font-size: 30px;
-            background: var(--primary-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .navbar .brand .brand-text {
-            display: flex;
-            flex-direction: column;
+            color: var(--primary);
         }
 
         .navbar .brand h1 {
             font-size: 22px;
             font-weight: 800;
-            color: var(--text-primary);
-            -webkit-text-fill-color: var(--text-primary);
+            color: var(--primary);
             letter-spacing: -0.5px;
         }
 
@@ -161,9 +139,7 @@
             font-size: 10px;
             opacity: 0.6;
             font-weight: 400;
-            letter-spacing: 0.5px;
             color: var(--text-secondary);
-            -webkit-text-fill-color: var(--text-secondary);
         }
 
         .navbar .nav-links {
@@ -202,18 +178,18 @@
         }
 
         .navbar .nav-links .btn-primary {
-            background: var(--primary-gradient);
+            background: var(--primary);
             color: white !important;
             padding: 10px 28px;
             border-radius: 50px;
             font-weight: 600;
             transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
+            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
         }
 
         .navbar .nav-links .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.4);
+            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.4);
         }
 
         .navbar .nav-links .btn-primary::after {
@@ -234,65 +210,56 @@
             color: white !important;
         }
 
-        .navbar .nav-links .btn-outline::after {
-            display: none;
-        }
-
         .navbar .mobile-toggle {
             display: none;
             background: none;
             border: none;
             font-size: 24px;
-            color: var(--text-primary);
+            color: var(--primary);
             cursor: pointer;
             padding: 8px;
         }
 
         /* ============================================================
-           HERO SECTION
+           HERO
            ============================================================ */
         .hero {
-            padding: 130px 30px 80px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            padding: 140px 30px 80px;
             max-width: var(--max-width);
             margin: 0 auto;
+            display: flex;
+            align-items: center;
             gap: 50px;
             min-height: 90vh;
-            position: relative;
         }
 
         .hero .content {
             flex: 1;
-            position: relative;
-            z-index: 1;
         }
 
         .hero .content .badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #e3f2fd;
+            background: #e8eaf6;
             color: var(--primary);
             padding: 6px 20px;
             border-radius: 50px;
             font-size: 12px;
             font-weight: 600;
             margin-bottom: 24px;
-            letter-spacing: 0.5px;
         }
 
         .hero .content h1 {
-            font-size: 52px;
+            font-size: 48px;
             font-weight: 800;
-            color: var(--text-primary);
+            color: var(--primary);
             line-height: 1.12;
             margin-bottom: 20px;
         }
 
         .hero .content h1 span {
-            color: var(--primary);
+            color: #3949ab;
             position: relative;
         }
 
@@ -311,7 +278,7 @@
         }
 
         .hero .content .cta-buttons .btn-primary {
-            background: var(--primary-gradient);
+            background: var(--primary);
             color: white;
             padding: 16px 38px;
             border: none;
@@ -324,12 +291,12 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 6px 25px rgba(21, 101, 192, 0.35);
+            box-shadow: 0 6px 25px rgba(26, 35, 126, 0.35);
         }
 
         .hero .content .cta-buttons .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(21, 101, 192, 0.45);
+            box-shadow: 0 10px 35px rgba(26, 35, 126, 0.45);
         }
 
         .hero .content .cta-buttons .btn-secondary {
@@ -364,7 +331,7 @@
 
         .hero .content .stats-row .stat-item h3 {
             font-size: 30px;
-            color: var(--text-primary);
+            color: var(--primary);
             font-weight: 800;
         }
 
@@ -372,151 +339,419 @@
             font-size: 14px;
             color: var(--text-light);
             margin-bottom: 0;
-            max-width: 100%;
         }
 
         .hero .image {
             flex: 1;
             display: flex;
             justify-content: center;
-            position: relative;
-            z-index: 1;
         }
 
         .hero .image .hero-illustration {
             width: 100%;
             max-width: 500px;
             height: 420px;
-            background: var(--primary-gradient);
+            background: var(--gradient);
             border-radius: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 140px;
-            color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.15);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(21, 101, 192, 0.25);
+            box-shadow: 0 20px 60px rgba(26, 35, 126, 0.25);
         }
 
         .hero .image .hero-illustration .icon-wrapper {
             position: relative;
             z-index: 1;
             color: rgba(255, 255, 255, 0.9);
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
 
         /* ============================================================
-           FEATURES SECTION
+           LOAN TYPES
            ============================================================ */
-        .features {
+        .loan-types {
             padding: 80px 30px;
             max-width: var(--max-width);
             margin: 0 auto;
         }
 
-        .features .section-header {
+        .loan-types .section-header {
             text-align: center;
-            margin-bottom: 55px;
+            margin-bottom: 50px;
         }
 
-        .features .section-header h2 {
-            font-size: 38px;
-            color: var(--text-primary);
+        .loan-types .section-header h2 {
+            font-size: 36px;
+            color: var(--primary);
             font-weight: 800;
         }
 
-        .features .section-header p {
+        .loan-types .section-header p {
             color: var(--text-secondary);
             margin-top: 10px;
             font-size: 18px;
         }
 
-        .features .grid {
+        .loan-types .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
         }
 
-        .features .grid .feature-card {
+        .loan-types .grid .loan-card {
             background: var(--white);
-            padding: 35px 30px;
+            padding: 30px 25px;
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             transition: var(--transition);
             text-align: center;
             border: 1px solid rgba(0, 0, 0, 0.04);
-            position: relative;
-            overflow: hidden;
+            cursor: pointer;
         }
 
-        .features .grid .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .features .grid .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .features .grid .feature-card:hover {
-            transform: translateY(-8px);
+        .loan-types .grid .loan-card:hover {
+            transform: translateY(-6px);
             box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
         }
 
-        .features .grid .feature-card .icon {
-            width: 72px;
-            height: 72px;
-            border-radius: 18px;
+        .loan-types .grid .loan-card .icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px;
+            margin: 0 auto 16px;
             font-size: 30px;
         }
 
-        .features .grid .feature-card .icon.blue {
-            background: #e3f2fd;
+        .loan-types .grid .loan-card .icon.blue {
+            background: #e8eaf6;
             color: var(--primary);
         }
-        .features .grid .feature-card .icon.green {
+        .loan-types .grid .loan-card .icon.green {
             background: #e8f5e9;
             color: var(--success);
         }
-        .features .grid .feature-card .icon.orange {
+        .loan-types .grid .loan-card .icon.orange {
             background: #fff3e0;
             color: var(--warning);
         }
-        .features .grid .feature-card .icon.purple {
+        .loan-types .grid .loan-card .icon.purple {
             background: #f3e5f5;
             color: #7b1fa2;
         }
-        .features .grid .feature-card .icon.red {
+        .loan-types .grid .loan-card .icon.red {
             background: #ffebee;
             color: var(--danger);
         }
-        .features .grid .feature-card .icon.teal {
+        .loan-types .grid .loan-card .icon.teal {
             background: #e0f7fa;
             color: #00897b;
         }
 
-        .features .grid .feature-card h3 {
-            font-size: 19px;
-            color: var(--text-primary);
-            margin-bottom: 10px;
+        .loan-types .grid .loan-card h3 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 6px;
         }
 
-        .features .grid .feature-card p {
+        .loan-types .grid .loan-card p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        .loan-types .grid .loan-card .rate {
+            display: inline-block;
+            background: #e8eaf6;
+            color: var(--primary);
+            padding: 2px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* ============================================================
+           HOW IT WORKS
+           ============================================================ */
+        .how-it-works {
+            padding: 80px 30px;
+            background: var(--white);
+        }
+
+        .how-it-works .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .how-it-works .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .how-it-works .section-header h2 {
+            font-size: 36px;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .how-it-works .section-header p {
+            color: var(--text-secondary);
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        .steps .step {
+            text-align: center;
+        }
+
+        .steps .step .number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 24px;
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(26, 35, 126, 0.25);
+        }
+
+        .steps .step h4 {
+            font-size: 18px;
+            color: var(--primary);
+            margin-bottom: 6px;
+        }
+
+        .steps .step p {
             font-size: 14px;
             color: var(--text-secondary);
-            line-height: 1.7;
+        }
+
+        /* ============================================================
+           TESTIMONIALS
+           ============================================================ */
+        .testimonials {
+            padding: 80px 30px;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .testimonials .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .testimonials .section-header h2 {
+            font-size: 36px;
+            color: var(--primary);
+            font-weight: 800;
+        }
+
+        .testimonials .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .testimonials .grid .testimonial-card {
+            background: var(--white);
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .testimonials .grid .testimonial-card .stars {
+            color: #ffb300;
+            font-size: 18px;
+            margin-bottom: 12px;
+            letter-spacing: 2px;
+        }
+
+        .testimonials .grid .testimonial-card .quote {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .testimonials .grid .testimonial-card .author {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .testimonials .grid .testimonial-card .author .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        .testimonials .grid .testimonial-card .author .info h4 {
+            font-size: 15px;
+            color: var(--primary);
+        }
+
+        .testimonials .grid .testimonial-card .author .info small {
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        /* ============================================================
+           CTA
+           ============================================================ */
+        .cta-section {
+            padding: 80px 30px;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.85;
+            margin-bottom: 30px;
+        }
+
+        .cta-section .btn-white {
+            background: white;
+            color: var(--primary);
+            padding: 16px 44px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .cta-section .btn-white:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* ============================================================
+           FOOTER
+           ============================================================ */
+        .footer {
+            background: #0d1445;
+            color: rgba(255, 255, 255, 0.85);
+            padding: 60px 30px 25px;
+        }
+
+        .footer .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer .container .brand h2 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .footer .container .brand h2 i {
+            margin-right: 10px;
+        }
+
+        .footer .container .brand p {
+            font-size: 14px;
+            line-height: 1.8;
+            max-width: 320px;
+            opacity: 0.8;
+        }
+
+        .footer .container .brand .social {
+            display: flex;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .footer .container .brand .social a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: var(--transition);
+            font-size: 18px;
+        }
+
+        .footer .container .brand .social a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .footer .container .col h4 {
+            color: white;
+            font-size: 16px;
+            margin-bottom: 16px;
+        }
+
+        .footer .container .col a {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            padding: 5px 0;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .footer .container .col a:hover {
+            color: white;
+            padding-left: 6px;
+        }
+
+        .footer .bottom {
+            max-width: var(--max-width);
+            margin: 30px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.7;
         }
 
         /* ============================================================
@@ -583,11 +818,15 @@
                 align-items: center;
             }
 
-            .hero .content .stats-row .stat-item h3 {
-                font-size: 24px;
+            .loan-types .grid {
+                grid-template-columns: 1fr 1fr;
             }
 
-            .features .grid {
+            .footer .container {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .steps {
                 grid-template-columns: 1fr 1fr;
             }
         }
@@ -607,7 +846,24 @@
                 justify-content: center;
             }
 
-            .features .grid {
+            .loan-types .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer .container .brand p {
+                max-width: 100%;
+            }
+
+            .footer .container .brand .social {
+                justify-content: center;
+            }
+
+            .steps {
                 grid-template-columns: 1fr;
             }
 
@@ -622,7 +878,7 @@
 <body>
 
     <!-- ============================================================
-    TOAST NOTIFICATION
+    TOAST
     ============================================================ -->
     <div id="toast" class="toast"></div>
 
@@ -632,7 +888,7 @@
     <nav class="navbar" id="navbar">
         <a href="index.html" class="brand">
             <i class="fa-solid fa-building-columns"></i>
-            <div class="brand-text">
+            <div>
                 <h1>EasyLoan</h1>
                 <small>India's Trusted Lender</small>
             </div>
@@ -643,39 +899,38 @@
         </button>
 
         <div class="nav-links" id="navLinks">
-            <!-- Dynamic content will be rendered by JavaScript -->
+            <!-- Dynamic -->
         </div>
     </nav>
 
     <!-- ============================================================
-    HERO SECTION
+    HERO
     ============================================================ -->
-    <section class="hero" id="home">
+    <section class="hero">
         <div class="content">
             <div class="badge">
-                <i class="fa-solid fa-shield-halved"></i>
-                RBI Registered &amp; Trusted
+                <i class="fa-solid fa-shield-halved"></i> RBI Registered
             </div>
             <h1>
-                Fast &amp; Easy<br>
-                <span>Loan Solutions</span> for Everyone
+                Get <span>Instant Loan</span><br>
+                Approval in Minutes
             </h1>
             <p>
-                Get instant personal loans, home loans, car loans, and business loans
-                with minimal documentation and competitive interest rates.
+                Personal, Home, Car, Education & Business loans with minimal
+                documentation and competitive interest rates.
             </p>
             <div class="cta-buttons">
-                <a href="register.html" class="btn-primary" id="heroApplyBtn">
+                <a href="apply-loan.html" class="btn-primary">
                     <i class="fa-solid fa-rocket"></i> Apply Now
                 </a>
-                <a href="#features" class="btn-secondary">
-                    <i class="fa-solid fa-circle-info"></i> Learn More
+                <a href="#loan-types" class="btn-secondary">
+                    <i class="fa-solid fa-circle-info"></i> Explore Loans
                 </a>
             </div>
             <div class="stats-row">
                 <div class="stat-item">
                     <h3>₹500Cr+</h3>
-                    <p>Disbursed Loans</p>
+                    <p>Disbursed</p>
                 </div>
                 <div class="stat-item">
                     <h3>50K+</h3>
@@ -684,6 +939,10 @@
                 <div class="stat-item">
                     <h3>98%</h3>
                     <p>Approval Rate</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24hrs</h3>
+                    <p>Disbursement</p>
                 </div>
             </div>
         </div>
@@ -697,51 +956,203 @@
     </section>
 
     <!-- ============================================================
-    FEATURES SECTION
+    LOAN TYPES
     ============================================================ -->
-    <section class="features" id="features">
+    <section class="loan-types" id="loan-types">
         <div class="section-header">
-            <h2>Why Choose EasyLoan India?</h2>
-            <p>We make borrowing simple, transparent, and hassle-free.</p>
+            <h2>Choose Your Loan</h2>
+            <p>Find the perfect loan for your needs with best-in-class rates</p>
         </div>
         <div class="grid">
-            <div class="feature-card">
-                <div class="icon blue"><i class="fa-solid fa-bolt"></i></div>
-                <h3>Instant Approval</h3>
-                <p>Get loan approval within minutes with our AI-powered verification system.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon blue"><i class="fa-solid fa-user"></i></div>
+                <h3>Personal Loan</h3>
+                <p>Up to ₹25 Lakhs</p>
+                <span class="rate">10.5% p.a.</span>
             </div>
-            <div class="feature-card">
-                <div class="icon green"><i class="fa-solid fa-file-lines"></i></div>
-                <h3>Paperless Process</h3>
-                <p>100% digital application process. No physical paperwork required.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon green"><i class="fa-solid fa-house"></i></div>
+                <h3>Home Loan</h3>
+                <p>Up to ₹5 Crore</p>
+                <span class="rate">8.5% p.a.</span>
             </div>
-            <div class="feature-card">
-                <div class="icon orange"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-                <h3>Low Interest Rates</h3>
-                <p>Competitive interest rates starting from 8.5% per annum.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon orange"><i class="fa-solid fa-car"></i></div>
+                <h3>Car Loan</h3>
+                <p>Up to ₹50 Lakhs</p>
+                <span class="rate">9.5% p.a.</span>
             </div>
-            <div class="feature-card">
-                <div class="icon purple"><i class="fa-solid fa-clock"></i></div>
-                <h3>Flexible Tenure</h3>
-                <p>Choose repayment tenure from 6 to 60 months as per your convenience.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon purple"><i class="fa-solid fa-graduation-cap"></i></div>
+                <h3>Education Loan</h3>
+                <p>Up to ₹50 Lakhs</p>
+                <span class="rate">8.0% p.a.</span>
             </div>
-            <div class="feature-card">
-                <div class="icon red"><i class="fa-solid fa-lock"></i></div>
-                <h3>100% Secure</h3>
-                <p>Bank-grade 256-bit encryption to protect your personal and financial data.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon teal"><i class="fa-solid fa-briefcase"></i></div>
+                <h3>Business Loan</h3>
+                <p>Up to ₹2 Crore</p>
+                <span class="rate">11.0% p.a.</span>
             </div>
-            <div class="feature-card">
-                <div class="icon teal"><i class="fa-solid fa-headset"></i></div>
-                <h3>24/7 Support</h3>
-                <p>Dedicated customer support team available round the clock to assist you.</p>
+            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
+                <div class="icon red"><i class="fa-solid fa-truck"></i></div>
+                <h3>Two-Wheeler Loan</h3>
+                <p>Up to ₹5 Lakhs</p>
+                <span class="rate">12.0% p.a.</span>
             </div>
         </div>
     </section>
 
+    <!-- ============================================================
+    HOW IT WORKS
+    ============================================================ -->
+    <section class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get your loan in 4 simple steps</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="number">1</div>
+                    <h4>📝 Apply Online</h4>
+                    <p>Fill your details & loan requirements in 5 minutes</p>
+                </div>
+                <div class="step">
+                    <div class="number">2</div>
+                    <h4>📄 Upload KYC</h4>
+                    <p>Upload PAN, Aadhaar & Bank Statements</p>
+                </div>
+                <div class="step">
+                    <div class="number">3</div>
+                    <h4>✅ Get Approval</h4>
+                    <p>Our team reviews & approves your application</p>
+                </div>
+                <div class="step">
+                    <div class="number">4</div>
+                    <h4>💰 Receive Funds</h4>
+                    <p>Money credited to your account within 24 hours</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    TESTIMONIALS
+    ============================================================ -->
+    <section class="testimonials">
+        <div class="section-header">
+            <h2>What Our Customers Say</h2>
+            <p>Real stories from real people</p>
+        </div>
+        <div class="grid">
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <p class="quote">"Got my home loan approved in just 6 hours! The process was completely digital and hassle-free."</p>
+                <div class="author">
+                    <div class="avatar">RS</div>
+                    <div class="info">
+                        <h4>Rahul Sharma</h4>
+                        <small>Home Loan, 2024</small>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <p class="quote">"Best loan app in India! I got my business loan within 24 hours. The team was very supportive."</p>
+                <div class="author">
+                    <div class="avatar">PM</div>
+                    <div class="info">
+                        <h4>Priya Mehta</h4>
+                        <small>Business Loan, 2024</small>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                </div>
+                <p class="quote">"Car loan approved in 2 hours! No hidden charges, transparent process. Highly recommended!"</p>
+                <div class="author">
+                    <div class="avatar">AK</div>
+                    <div class="info">
+                        <h4>Amit Kumar</h4>
+                        <small>Car Loan, 2024</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    CTA
+    ============================================================ -->
+    <section class="cta-section">
+        <h2>Ready to Get Your Loan?</h2>
+        <p>Join 50,000+ happy customers and get the funds you need today.</p>
+        <a href="apply-loan.html" class="btn-white">
+            <i class="fa-solid fa-rocket"></i> Apply Now
+        </a>
+    </section>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer class="footer">
+        <div class="container">
+            <div class="brand">
+                <h2><i class="fa-solid fa-building-columns"></i> EasyLoan India</h2>
+                <p>Empowering India with fast, transparent, and accessible loan solutions for everyone.</p>
+                <div class="social">
+                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                </div>
+            </div>
+            <div class="col">
+                <h4>Products</h4>
+                <a href="apply-loan.html">Personal Loan</a>
+                <a href="apply-loan.html">Home Loan</a>
+                <a href="apply-loan.html">Car Loan</a>
+                <a href="apply-loan.html">Education Loan</a>
+                <a href="apply-loan.html">Business Loan</a>
+            </div>
+            <div class="col">
+                <h4>Company</h4>
+                <a href="about.html">About Us</a>
+                <a href="contact.html">Contact</a>
+                <a href="faq.html">FAQs</a>
+            </div>
+            <div class="col">
+                <h4>Support</h4>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms.html">Terms & Conditions</a>
+                <a href="contact.html">Help Center</a>
+            </div>
+        </div>
+        <div class="bottom">
+            &copy; 2025 EasyLoan India. All rights reserved. | Made with ❤️ in India
+        </div>
+    </footer>
+
     <script>
-        // ============================================================
-        // FIREBASE CONFIGURATION
-        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCCSSnvJ1w9CGd68TAy9ZVH9Taw1J0-xdE",
             authDomain: "easyloan-india.firebaseapp.com",
@@ -753,71 +1164,31 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
-        const database = firebase.database();
 
-        // ============================================================
-        // TOAST NOTIFICATION
-        // ============================================================
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
             const icons = {
                 success: 'fa-solid fa-check-circle',
                 error: 'fa-solid fa-exclamation-circle',
-                info: 'fa-solid fa-info-circle',
-                warning: 'fa-solid fa-triangle-exclamation'
+                info: 'fa-solid fa-info-circle'
             };
-
             toast.innerHTML = `<i class="${icons[type] || icons.info}"></i> ${message}`;
             toast.className = 'toast ' + type + ' show';
-
             clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 4000);
+            toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
-        // ============================================================
-        // MOBILE NAV TOGGLE
-        // ============================================================
         document.getElementById('mobileToggle').addEventListener('click', function() {
             document.getElementById('navLinks').classList.toggle('open');
         });
 
-        // Close mobile nav on link click
-        document.addEventListener('click', function(e) {
-            const navLinks = document.getElementById('navLinks');
-            const toggle = document.getElementById('mobileToggle');
-            if (!navLinks.contains(e.target) && !toggle.contains(e.target)) {
-                navLinks.classList.remove('open');
-            }
-        });
-
-        // ============================================================
-        // NAVBAR SCROLL EFFECT
-        // ============================================================
-        window.addEventListener('scroll', function() {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-        });
-
-        // ============================================================
-        // UPDATE NAVBAR BASED ON AUTH STATE
-        // ============================================================
         function updateNavbar(user) {
             const navLinks = document.getElementById('navLinks');
-            const heroApplyBtn = document.getElementById('heroApplyBtn');
 
             if (user) {
-                // User is logged in
                 navLinks.innerHTML = `
                     <a href="index.html" class="active">Home</a>
-                    <a href="#features">Features</a>
                     <a href="about.html">About</a>
-                    <a href="contact.html">Contact</a>
                     <a href="dashboard.html" style="color:var(--primary);font-weight:600;">
                         <i class="fa-solid fa-gauge-high"></i> Dashboard
                     </a>
@@ -826,44 +1197,25 @@
                     </a>
                 `;
 
-                // Update hero button
-                heroApplyBtn.href = 'dashboard.html';
-                heroApplyBtn.innerHTML = '<i class="fa-solid fa-gauge-high"></i> Go to Dashboard';
-
-                // Add logout functionality
-                const logoutBtn = document.getElementById('logoutNavBtn');
-                if (logoutBtn) {
-                    logoutBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        auth.signOut().then(() => {
-                            showToast('✅ Logged out successfully', 'success');
-                            updateNavbar(null);
-                        }).catch((error) => {
-                            showToast('❌ Error logging out: ' + error.message, 'error');
-                        });
+                document.getElementById('logoutNavBtn').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    auth.signOut().then(() => {
+                        showToast('✅ Logged out', 'success');
+                        updateNavbar(null);
                     });
-                }
+                });
 
             } else {
-                // User is not logged in
                 navLinks.innerHTML = `
                     <a href="index.html" class="active">Home</a>
-                    <a href="#features">Features</a>
                     <a href="about.html">About</a>
                     <a href="contact.html">Contact</a>
                     <a href="login.html" class="btn-outline">Login</a>
                     <a href="register.html" class="btn-primary">Get Started</a>
                 `;
-
-                // Reset hero button
-                heroApplyBtn.href = 'register.html';
-                heroApplyBtn.innerHTML = '<i class="fa-solid fa-rocket"></i> Apply Now';
             }
         }
 
-        // ============================================================
-        // AUTH STATE OBSERVER
-        // ============================================================
         auth.onAuthStateChanged((user) => {
             updateNavbar(user);
         });

@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | EasyLoan India</title>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1565c0;
+            --primary-dark: #0d47a1;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --warning: #f57c00;
+            --text-primary: #1a237e;
+            --text-secondary: #455a64;
+            --bg: #f0f4f8;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text-secondary);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .navbar .brand i {
+            font-size: 28px;
+        }
+        .navbar .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .navbar .brand small {
+            display: block;
+            font-size: 10px;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        .navbar .nav-links a:hover {
+            color: var(--primary);
+        }
+        .navbar .nav-links .active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .navbar .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        .page-header p {
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 35px;
+            box-shadow: var(--shadow);
+        }
+
+        .profile-avatar {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: 700;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(21, 101, 192, 0.3);
+        }
+
+        .profile-avatar .name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-top: 12px;
+        }
+
+        .profile-avatar .email {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .profile-form .form-group {
+            margin-bottom: 18px;
+        }
+
+        .profile-form .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .profile-form .form-group input,
+        .profile-form .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e8e8e8;
+            border-radius: 10px;
+            font-size: 14px;
+            outline: none;
+            font-family: inherit;
+            transition: var(--transition);
+            background: #fafafa;
+        }
+
+        .profile-form .form-group input:focus,
+        .profile-form .form-group textarea:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(21, 101, 192, 0.08);
+        }
+
+        .profile-form .form-group input:disabled {
+            background: #f0f0f0;
+            cursor: not-allowed;
+        }
+
+        .profile-form .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .profile-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 12px 30px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-danger:hover {
+            background: #b71c1c;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            max-width: 360px;
+            font-size: 14px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success {
+            background: var(--success);
+        }
+        .toast.error {
+            background: var(--danger);
+        }
+        .toast.info {
+            background: var(--primary);
+        }
+
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .loader i {
+            font-size: 48px;
+            color: var(--primary);
+        }
+
+        @media(max-width: 768px) {
+            .navbar .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                gap: 15px;
+            }
+            .navbar .nav-links.open {
+                display: flex;
+            }
+            .navbar .mobile-toggle {
+                display: block;
+            }
+
+            .profile-form .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card {
+                padding: 20px;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group button {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            <i class="fa-solid fa-building-columns"></i>
+            <div>
+                <h1>EasyLoan</h1>
+                <small>India's Trusted Lender</small>
+            </div>
+        </a>
+
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="my-loans.html">My Loans</a>
+            <a href="apply-loan.html">Apply</a>
+            <a href="profile.html" class="active"><i class="fa-solid fa-user"></i></a>
+            <a href="#" id="logoutNavBtn" style="color:#c62828;">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>👤 My Profile</h1>
+            <p>View and manage your personal information.</p>
+        </div>
+
+        <!-- Loading -->
+        <div class="loader" id="loader">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+        </div>
+
+        <!-- Profile Content -->
+        <div id="profileContent" style="display:none;">
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <div class="avatar" id="avatarLetter">U</div>
+                    <div class="name" id="profileName">User</div>
+                    <div class="email" id="profileEmail">user@email.com</div>
+                </div>
+
+                <form class="profile-form" id="profileForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="fullName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="email" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Phone Number</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <input type="date" id="dob">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>PAN Number</label>
+                        <input type="text" id="pan" maxlength="10" placeholder="ABCDE1234F">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address</label>
+                        <textarea id="address" placeholder="Enter your complete address"></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button type="submit" class="btn-primary" id="saveBtn">
+                            <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="resetForm()">
+                            <i class="fa-solid fa-rotate-left"></i> Reset
+                        </button>
+                        <button type="button" class="btn-danger" id="deleteAccountBtn">
+                            <i class="fa-solid fa-trash"></i> Delete Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCSSnvJ1w9CGd68TAy9ZVH9Taw1J0-xdE",
+            authDomain: "easyloan-india.firebaseapp.com",
+            projectId: "easyloan-india",
+            storageBucket: "easyloan-india.firebasestorage.app",
+            messagingSenderId: "925263655882",
+            appId: "1:925263655882:web:0dd41e9964bd9a7a93d533"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let currentUserData = {};
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        // MOBILE NAV
+        // ============================================================
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        // ============================================================
+        // AUTH STATE
+        // ============================================================
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                loadProfile(user);
+            }
+        });
+
+        document.getElementById('logoutNavBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                showToast('✅ Logged out', 'success');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+            });
+        });
+
+        // ============================================================
+        // LOAD PROFILE
+        // ============================================================
+        function loadProfile(user) {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('profileContent');
+
+            loader.style.display = 'flex';
+            content.style.display = 'none';
+
+            database.ref('users/' + user.uid).once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+
+                    if (data) {
+                        currentUserData = data;
+
+                        // Update UI
+                        const initial = (data.fullName || 'U')[0].toUpperCase();
+                        document.getElementById('avatarLetter').textContent = initial;
+                        document.getElementById('profileName').textContent = data.fullName || 'User';
+                        document.getElementById('profileEmail').textContent = data.email || user.email;
+
+                        document.getElementById('fullName').value = data.fullName || '';
+                        document.getElementById('email').value = data.email || user.email;
+                        document.getElementById('phone').value = data.phone || '';
+                        document.getElementById('dob').value = data.dob || '';
+                        document.getElementById('pan').value = data.pan || '';
+                        document.getElementById('address').value = data.address || '';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading profile:', error);
+                    showToast('❌ Error loading profile', 'error');
+                })
+                .finally(() => {
+                    loader.style.display = 'none';
+                    content.style.display = 'block';
+                });
+        }
+
+        // ============================================================
+        // SAVE PROFILE
+        // ============================================================
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const dob = document.getElementById('dob').value;
+            const pan = document.getElementById('pan').value.trim().toUpperCase();
+            const address = document.getElementById('address').value.trim();
+
+            if (!fullName) {
+                showToast('⚠️ Please enter your full name', 'error');
+                return;
+            }
+
+            if (!phone || phone.length < 10) {
+                showToast('⚠️ Please enter a valid phone number', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const updateData = {
+                fullName: fullName,
+                phone: phone,
+                dob: dob,
+                pan: pan,
+                address: address,
+                updatedAt: firebase.database.ServerValue.TIMESTAMP
+            };
+
+            database.ref('users/' + user.uid).update(updateData)
+                .then(() => {
+                    showToast('✅ Profile updated successfully!', 'success');
+                    currentUserData = { ...currentUserData, ...updateData };
+
+                    // Update avatar and name
+                    const initial = (fullName || 'U')[0].toUpperCase();
+                    document.getElementById('avatarLetter').textContent = initial;
+                    document.getElementById('profileName').textContent = fullName;
+                })
+                .catch((error) => {
+                    console.error('Error updating profile:', error);
+                    showToast('❌ Error updating profile: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+                });
+        });
+
+        // ============================================================
+        // RESET FORM
+        // ============================================================
+        function resetForm() {
+            if (currentUserData) {
+                document.getElementById('fullName').value = currentUserData.fullName || '';
+                document.getElementById('phone').value = currentUserData.phone || '';
+                document.getElementById('dob').value = currentUserData.dob || '';
+                document.getElementById('pan').value = currentUserData.pan || '';
+                document.getElementById('address').value = currentUserData.address || '';
+                showToast('🔄 Form reset to saved data', 'info');
+            }
+        }
+
+        // ============================================================
+        // DELETE ACCOUNT
+        // ============================================================
+        document.getElementById('deleteAccountBtn').addEventListener('click', function() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            if (!confirm('⚠️ Are you sure you want to delete your account? This action cannot be undone!')) {
+                return;
+            }
+
+            if (!confirm('⚠️ This will permanently delete all your data including loans. Are you absolutely sure?')) {
+                return;
+            }
+
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Deleting...';
+
+            // Delete user data from database
+            database.ref('users/' + user.uid).remove()
+                .then(() => {
+                    // Delete all loans of this user
+                    return database.ref('loans').orderByChild('userId').equalTo(user.uid).once('value');
+                })
+                .then((snapshot) => {
+                    const updates = {};
+                    snapshot.forEach((child) => {
+                        updates[child.key] = null;
+                    });
+                    return database.ref('loans').update(updates);
+                })
+                .then(() => {
+                    // Delete user account
+                    return user.delete();
+                })
+                .then(() => {
+                    showToast('✅ Account deleted successfully', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    console.error('Error deleting account:', error);
+                    showToast('❌ Error deleting account: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete Account';
+                });
+        });
+    </script>
+
+</body>
+</html>

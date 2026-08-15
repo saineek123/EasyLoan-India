@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Details | EasyLoan India</title>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1565c0;
+            --primary-dark: #0d47a1;
+            --success: #2e7d32;
+            --danger: #c62828;
+            --warning: #f57c00;
+            --text-primary: #1a237e;
+            --text-secondary: #455a64;
+            --bg: #f0f4f8;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Poppins', sans-serif;
+            background: var(--bg);
+            color: var(--text-secondary);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: white;
+            padding: 16px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.06);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--primary);
+        }
+        .navbar .brand i {
+            font-size: 28px;
+        }
+        .navbar .brand h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        .navbar .brand small {
+            display: block;
+            font-size: 10px;
+            opacity: 0.6;
+            font-weight: 300;
+        }
+
+        .navbar .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        .navbar .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
+            font-size: 14px;
+        }
+        .navbar .nav-links a:hover {
+            color: var(--primary);
+        }
+        .navbar .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header .back-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .page-header .back-link:hover {
+            text-decoration: underline;
+        }
+
+        .page-header h1 {
+            font-size: 30px;
+            color: var(--text-primary);
+            font-weight: 800;
+        }
+
+        /* Loading */
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 300px;
+        }
+
+        .loader i {
+            font-size: 48px;
+            color: var(--primary);
+        }
+
+        /* Detail Cards */
+        .detail-card {
+            background: white;
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .detail-card .card-title {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .detail-card .card-title i {
+            margin-right: 10px;
+            color: var(--primary);
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 30px;
+        }
+
+        .detail-grid .detail-item .label {
+            font-size: 13px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .detail-grid .detail-item .value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+        .status-badge.approved {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+        .status-badge.disbursed {
+            background: #e3f2fd;
+            color: var(--primary);
+        }
+        .status-badge.rejected {
+            background: #ffebee;
+            color: var(--danger);
+        }
+        .status-badge.completed {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress-container .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-container .progress-bar .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .progress-container .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            bottom: 4px;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .timeline .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 6px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+
+        .timeline .timeline-item.completed::before {
+            background: var(--success);
+            box-shadow: 0 0 0 2px var(--success);
+        }
+
+        .timeline .timeline-item.active::before {
+            background: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .timeline .timeline-item .time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .timeline .timeline-item .title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .timeline .timeline-item .desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-secondary);
+            padding: 12px 28px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 500;
+            z-index: 9999;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            transform: translateX(120%);
+            transition: transform 0.4s ease;
+            max-width: 360px;
+            font-size: 14px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+        .toast.success {
+            background: var(--success);
+        }
+        .toast.error {
+            background: var(--danger);
+        }
+        .toast.info {
+            background: var(--primary);
+        }
+
+        @media(max-width: 768px) {
+            .navbar .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                gap: 15px;
+            }
+            .navbar .nav-links.open {
+                display: flex;
+            }
+            .navbar .mobile-toggle {
+                display: block;
+            }
+
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 24px;
+            }
+
+            .detail-card {
+                padding: 20px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+            }
+            .btn-group a {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <a href="index.html" class="brand">
+            <i class="fa-solid fa-building-columns"></i>
+            <div>
+                <h1>EasyLoan</h1>
+                <small>India's Trusted Lender</small>
+            </div>
+        </a>
+
+        <button class="mobile-toggle" id="mobileToggle">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <div class="nav-links" id="navLinks">
+            <a href="index.html">Home</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="my-loans.html">My Loans</a>
+            <a href="apply-loan.html">Apply</a>
+            <a href="profile.html"><i class="fa-solid fa-user"></i></a>
+            <a href="#" id="logoutNavBtn" style="color:#c62828;">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <a href="my-loans.html" class="back-link">
+                <i class="fa-solid fa-arrow-left"></i> Back to My Loans
+            </a>
+            <h1 id="loanTitle">🔍 Loan Details</h1>
+        </div>
+
+        <!-- Loading -->
+        <div class="loader" id="loader">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+        </div>
+
+        <!-- Loan Details -->
+        <div id="loanContent" style="display:none;">
+
+            <!-- Status Card -->
+            <div class="detail-card" id="statusCard">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                    <div>
+                        <div style="font-size:13px;color:#999;">Loan ID</div>
+                        <div style="font-size:18px;font-weight:700;color:var(--text-primary);" id="loanIdDisplay">-</div>
+                    </div>
+                    <div>
+                        <span class="status-badge" id="statusBadge">-</span>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width:0%;"></div>
+                    </div>
+                    <div class="progress-label">
+                        <span id="progressText">Application Submitted</span>
+                        <span id="progressPercent">0%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loan Details -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fa-solid fa-file-invoice"></i> Loan Information</div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="label">Loan Type</div>
+                        <div class="value" id="loanType">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Loan Amount</div>
+                        <div class="value" id="loanAmount">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Tenure</div>
+                        <div class="value" id="loanTenure">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Monthly EMI</div>
+                        <div class="value" id="loanEMI">-</div>
+                    </div>
+                    <div class="detail-item" style="grid-column:1/-1;">
+                        <div class="label">Purpose</div>
+                        <div class="value" id="loanPurpose">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Details -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fa-solid fa-user"></i> Personal Information</div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="label">Full Name</div>
+                        <div class="value" id="fullName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Email</div>
+                        <div class="value" id="email">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Phone</div>
+                        <div class="value" id="phone">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">PAN Number</div>
+                        <div class="value" id="pan">-</div>
+                    </div>
+                    <div class="detail-item" style="grid-column:1/-1;">
+                        <div class="label">Address</div>
+                        <div class="value" id="address">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Application Timeline</div>
+                <div class="timeline" id="timeline">
+                    <div class="timeline-item completed">
+                        <div class="time" id="timeApplied">-</div>
+                        <div class="title">📝 Application Submitted</div>
+                        <div class="desc">Your loan application was successfully submitted.</div>
+                    </div>
+                    <div class="timeline-item" id="timelineReview">
+                        <div class="time">-</div>
+                        <div class="title">🔍 Under Review</div>
+                        <div class="desc">Our team is reviewing your application.</div>
+                    </div>
+                    <div class="timeline-item" id="timelineApproved">
+                        <div class="time">-</div>
+                        <div class="title">✅ Approved</div>
+                        <div class="desc">Your loan application has been approved.</div>
+                    </div>
+                    <div class="timeline-item" id="timelineDisbursed">
+                        <div class="time">-</div>
+                        <div class="title">💰 Disbursed</div>
+                        <div class="desc">Loan amount has been disbursed to your account.</div>
+                    </div>
+                    <div class="timeline-item" id="timelineCompleted">
+                        <div class="time">-</div>
+                        <div class="title">✔️ Completed</div>
+                        <div class="desc">All EMIs paid. Loan closed successfully.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="detail-card">
+                <div class="card-title"><i class="fa-solid fa-ellipsis"></i> Actions</div>
+                <div class="btn-group">
+                    <a href="payments.html?loanId=" class="btn-primary" id="payBtn">
+                        <i class="fa-solid fa-credit-card"></i> Pay EMI
+                    </a>
+                    <a href="#" class="btn-secondary" id="downloadBtn">
+                        <i class="fa-solid fa-download"></i> Download Statement
+                    </a>
+                    <a href="contact.html" class="btn-secondary">
+                        <i class="fa-solid fa-headset"></i> Contact Support
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCSSnvJ1w9CGd68TAy9ZVH9Taw1J0-xdE",
+            authDomain: "easyloan-india.firebaseapp.com",
+            projectId: "easyloan-india",
+            storageBucket: "easyloan-india.firebasestorage.app",
+            messagingSenderId: "925263655882",
+            appId: "1:925263655882:web:0dd41e9964bd9a7a93d533"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        // ============================================================
+        // TOAST
+        // ============================================================
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============================================================
+        // MOBILE NAV
+        // ============================================================
+        document.getElementById('mobileToggle').addEventListener('click', function() {
+            document.getElementById('navLinks').classList.toggle('open');
+        });
+
+        // ============================================================
+        // AUTH STATE
+        // ============================================================
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                const params = new URLSearchParams(window.location.search);
+                const loanId = params.get('id');
+                if (loanId) {
+                    loadLoanDetails(loanId);
+                } else {
+                    showToast('⚠️ No loan ID provided', 'error');
+                    window.location.href = 'my-loans.html';
+                }
+            }
+        });
+
+        document.getElementById('logoutNavBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            auth.signOut().then(() => {
+                showToast('✅ Logged out', 'success');
+                setTimeout(() => window.location.href = 'login.html', 1000);
+            });
+        });
+
+        // ============================================================
+        // LOAD LOAN DETAILS
+        // ============================================================
+        function loadLoanDetails(loanId) {
+            const loader = document.getElementById('loader');
+            const content = document.getElementById('loanContent');
+
+            loader.style.display = 'flex';
+            content.style.display = 'none';
+
+            database.ref('loans/' + loanId).once('value')
+                .then((snapshot) => {
+                    const loan = snapshot.val();
+
+                    if (!loan) {
+                        showToast('❌ Loan not found', 'error');
+                        window.location.href = 'my-loans.html';
+                        return;
+                    }
+
+                    // Check if this loan belongs to current user
+                    if (loan.userId !== auth.currentUser.uid) {
+                        showToast('❌ Unauthorized access', 'error');
+                        window.location.href = 'my-loans.html';
+                        return;
+                    }
+
+                    displayLoanDetails(loan, loanId);
+                })
+                .catch((error) => {
+                    console.error('Error loading loan:', error);
+                    showToast('❌ Error loading loan details', 'error');
+                })
+                .finally(() => {
+                    loader.style.display = 'none';
+                    content.style.display = 'block';
+                });
+        }
+
+        // ============================================================
+        // DISPLAY LOAN DETAILS
+        // ============================================================
+        function displayLoanDetails(loan, loanId) {
+            // Header
+            document.getElementById('loanTitle').textContent = '🔍 ' + (loan.loanType || 'Loan') + ' Details';
+
+            // Status
+            const status = loan.status || 'pending';
+            const statusLabel = {
+                'pending': '⏳ Pending',
+                'approved': '✅ Approved',
+                'disbursed': '💰 Disbursed',
+                'rejected': '❌ Rejected',
+                'completed': '✔️ Completed'
+            }[status] || status;
+
+            document.getElementById('loanIdDisplay').textContent = '#' + loanId.substring(0, 12) + '...';
+            document.getElementById('statusBadge').textContent = statusLabel;
+            document.getElementById('statusBadge').className = 'status-badge ' + status;
+
+            // Progress
+            const progressMap = {
+                'pending': { percent: 25, text: 'Application Submitted' },
+                'approved': { percent: 50, text: 'Approved by Team' },
+                'disbursed': { percent: 75, text: 'Amount Disbursed' },
+                'completed': { percent: 100, text: 'Loan Closed' },
+                'rejected': { percent: 100, text: 'Application Rejected' }
+            };
+
+            const progress = progressMap[status] || progressMap.pending;
+            document.getElementById('progressFill').style.width = progress.percent + '%';
+            document.getElementById('progressText').textContent = progress.text;
+            document.getElementById('progressPercent').textContent = progress.percent + '%';
+
+            // Loan Details
+            document.getElementById('loanType').textContent = loan.loanType || loan.type || 'Personal';
+            document.getElementById('loanAmount').textContent = '₹' + (loan.loanAmount || loan.amount || 0).toLocaleString();
+            document.getElementById('loanTenure').textContent = (loan.tenure || 12) + ' Months';
+            document.getElementById('loanEMI').textContent = '₹' + (loan.emiAmount || 0).toLocaleString();
+            document.getElementById('loanPurpose').textContent = loan.purpose || 'Not specified';
+
+            // Personal Details
+            document.getElementById('fullName').textContent = loan.fullName || 'N/A';
+            document.getElementById('email').textContent = loan.userEmail || loan.email || 'N/A';
+            document.getElementById('phone').textContent = loan.phone || 'N/A';
+            document.getElementById('pan').textContent = loan.pan || 'N/A';
+            document.getElementById('address').textContent = loan.address || 'N/A';
+
+            // Timeline
+            const dateApplied = loan.createdAt ? new Date(loan.createdAt) : new Date();
+            document.getElementById('timeApplied').textContent = dateApplied.toLocaleDateString('en-IN', {
+                day: '2-digit',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            // Update timeline based on status
+            const statusOrder = ['pending', 'approved', 'disbursed', 'completed'];
+            const currentIndex = statusOrder.indexOf(status);
+
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            timelineItems.forEach((item, index) => {
+                if (index <= currentIndex && status !== 'rejected') {
+                    item.classList.add('completed');
+                } else {
+                    item.classList.remove('completed');
+                }
+                if (index === currentIndex && status !== 'rejected') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // If rejected, mark all except first as inactive
+            if (status === 'rejected') {
+                timelineItems.forEach((item, index) => {
+                    if (index === 0) {
+                        item.classList.add('completed');
+                    } else {
+                        item.classList.remove('completed', 'active');
+                    }
+                });
+                document.querySelector('.timeline-item:last-child .desc').textContent = 'Application rejected by our team.';
+            }
+
+            // Update Pay EMI button
+            document.getElementById('payBtn').href = 'payments.html?loanId=' + loanId;
+
+            // Download button
+            document.getElementById('downloadBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                showToast('📄 Downloading statement...', 'info');
+                // Implement PDF download logic here
+            });
+        }
+    </script>
+
+</body>
+</html>

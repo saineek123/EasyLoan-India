@@ -8,6 +8,7 @@
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -25,6 +26,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 20px;
         }
 
         .login-container {
@@ -34,7 +36,6 @@
             border-radius: 20px;
             padding: 40px;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-            margin: 20px;
         }
 
         .logo {
@@ -54,6 +55,7 @@
         h2 {
             text-align: center;
             margin-bottom: 5px;
+            color: #1a237e;
         }
 
         p {
@@ -72,28 +74,34 @@
             margin-bottom: 6px;
             font-weight: 600;
             font-size: 14px;
+            color: #1a237e;
         }
 
         .input-group input {
             width: 100%;
             padding: 13px 45px 13px 15px;
-            border: 1px solid #ccc;
+            border: 2px solid #e0e0e0;
             border-radius: 10px;
             outline: none;
             font-size: 15px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+            background: #fafafa;
         }
 
         .input-group input:focus {
             border-color: #1565c0;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(21, 101, 192, 0.08);
         }
 
         .input-group i {
             position: absolute;
             right: 15px;
             top: 42px;
-            color: #777;
+            color: #999;
             cursor: pointer;
+            font-size: 18px;
         }
 
         .options {
@@ -117,43 +125,66 @@
             width: 100%;
             padding: 15px;
             border: none;
-            background: #1565c0;
+            background: linear-gradient(135deg, #1565c0, #0d47a1);
             color: #fff;
             font-size: 17px;
             border-radius: 10px;
             cursor: pointer;
             transition: .3s;
             font-weight: 600;
+            box-shadow: 0 4px 15px rgba(21, 101, 192, 0.3);
         }
 
         .login-btn:hover {
-            background: #0d47a1;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(21, 101, 192, 0.4);
         }
 
         .login-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
+            transform: none;
         }
 
         .divider {
             text-align: center;
             margin: 25px 0;
             color: #999;
+            position: relative;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e0e0e0;
+        }
+
+        .divider::before {
+            left: 0;
+        }
+        .divider::after {
+            right: 0;
         }
 
         .google-btn {
             width: 100%;
             padding: 14px;
-            border: 1px solid #ddd;
+            border: 2px solid #e0e0e0;
             background: #fff;
             border-radius: 10px;
             cursor: pointer;
             font-weight: 600;
             transition: .3s;
+            font-size: 15px;
         }
 
         .google-btn:hover {
             background: #f5f5f5;
+            border-color: #1565c0;
         }
 
         .google-btn:disabled {
@@ -162,13 +193,15 @@
         }
 
         .google-btn i {
-            color: red;
-            margin-right: 8px;
+            color: #ea4335;
+            margin-right: 10px;
+            font-size: 18px;
         }
 
         .register-link {
             margin-top: 25px;
             text-align: center;
+            font-size: 14px;
         }
 
         .register-link a {
@@ -196,6 +229,9 @@
             transition: transform 0.4s ease;
             max-width: 360px;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .toast.show {
@@ -203,13 +239,16 @@
         }
 
         .toast.success {
-            background: #2e7d32;
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
         }
         .toast.error {
-            background: #c62828;
+            background: linear-gradient(135deg, #c62828, #b71c1c);
         }
         .toast.info {
-            background: #0d47a1;
+            background: linear-gradient(135deg, #0288d1, #01579b);
+        }
+        .toast i {
+            font-size: 20px;
         }
 
         @media(max-width:500px) {
@@ -292,13 +331,19 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const database = firebase.database();
 
         // ============================================================
         // TOAST NOTIFICATION
         // ============================================================
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
-            toast.textContent = message;
+            const icons = {
+                success: 'fa-solid fa-check-circle',
+                error: 'fa-solid fa-exclamation-circle',
+                info: 'fa-solid fa-info-circle'
+            };
+            toast.innerHTML = `<i class="${icons[type] || icons.info}"></i> ${message}`;
             toast.className = 'toast ' + type + ' show';
             setTimeout(() => {
                 toast.classList.remove('show');
@@ -323,13 +368,17 @@
             }
         };
 
+        let isRedirecting = false;
+
         // ============================================================
-        // CHECK IF USER IS ALREADY LOGGED IN - REDIRECT TO DASHBOARD
+        // CHECK IF USER IS ALREADY LOGGED IN
         // ============================================================
         auth.onAuthStateChanged((user) => {
+            if (isRedirecting) return;
+
             if (user) {
-                // User is already logged in - redirect to dashboard
-                window.location.href = 'dashboard.html';
+                isRedirecting = true;
+                window.location.href = 'index.html';
             } else {
                 // Check for remembered email
                 const remembered = localStorage.getItem('rememberedEmail');
@@ -345,6 +394,7 @@
         // ============================================================
         document.getElementById("loginForm").addEventListener("submit", function(e) {
             e.preventDefault();
+            if (isRedirecting) return;
 
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("password").value.trim();
@@ -353,6 +403,18 @@
 
             if (!email || !password) {
                 showToast('⚠️ Please fill all fields', 'error');
+                return;
+            }
+
+            // Validate email
+            if (!email.includes('@') || !email.includes('.')) {
+                showToast('⚠️ Please enter a valid email address', 'error');
+                return;
+            }
+
+            // Validate password length
+            if (password.length < 6) {
+                showToast('⚠️ Password must be at least 6 characters', 'error');
                 return;
             }
 
@@ -373,7 +435,9 @@
 
                     showToast('✅ Login successful! Redirecting...', 'success');
 
-                    // Redirect to dashboard
+                    isRedirecting = true;
+
+                    // Redirect to index.html
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1000);
@@ -384,19 +448,22 @@
                     let errorMsg = '❌ Login failed. ';
                     switch (error.code) {
                         case 'auth/user-not-found':
-                            errorMsg += 'User not found. Please register first.';
+                            errorMsg = '❌ User not found. Please register first.';
                             break;
                         case 'auth/wrong-password':
-                            errorMsg += 'Incorrect password. Please try again.';
+                            errorMsg = '❌ Incorrect password. Please try again.';
                             break;
                         case 'auth/invalid-email':
-                            errorMsg += 'Invalid email format.';
+                            errorMsg = '❌ Invalid email format.';
                             break;
                         case 'auth/user-disabled':
-                            errorMsg += 'This account has been disabled.';
+                            errorMsg = '❌ This account has been disabled.';
                             break;
                         case 'auth/too-many-requests':
-                            errorMsg += 'Too many failed attempts. Please try again later.';
+                            errorMsg = '❌ Too many failed attempts. Please try again later.';
+                            break;
+                        case 'auth/network-request-failed':
+                            errorMsg = '❌ Network error. Please check your internet connection.';
                             break;
                         default:
                             errorMsg += error.message;
@@ -413,6 +480,8 @@
         // GOOGLE SIGN-IN
         // ============================================================
         document.getElementById("googleBtn").addEventListener("click", function() {
+            if (isRedirecting) return;
+
             const googleBtn = this;
             googleBtn.disabled = true;
             googleBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Connecting...';
@@ -421,7 +490,26 @@
 
             auth.signInWithPopup(provider)
                 .then((result) => {
+                    const user = result.user;
+
+                    // Check if user exists in database, if not create
+                    return database.ref('users/' + user.uid).once('value')
+                        .then((snapshot) => {
+                            if (!snapshot.exists()) {
+                                return database.ref('users/' + user.uid).set({
+                                    fullName: user.displayName || 'Google User',
+                                    email: user.email,
+                                    phone: user.phoneNumber || 'Not provided',
+                                    uid: user.uid,
+                                    role: 'user',
+                                    createdAt: firebase.database.ServerValue.TIMESTAMP
+                                });
+                            }
+                        });
+                })
+                .then(() => {
                     showToast('✅ Google login successful! Redirecting...', 'success');
+                    isRedirecting = true;
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1000);
@@ -433,6 +521,8 @@
                         errorMsg += 'Popup was closed. Please try again.';
                     } else if (error.code === 'auth/popup-blocked') {
                         errorMsg += 'Popup was blocked. Please allow popups.';
+                    } else if (error.code === 'auth/network-request-failed') {
+                        errorMsg += 'Network error. Please check your internet connection.';
                     } else {
                         errorMsg += error.message;
                     }

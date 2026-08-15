@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EasyLoan India - Your Trusted Loan Partner</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EasyLoan - Home</title>
 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
@@ -19,20 +20,22 @@
             --primary-dark: #0d1445;
             --primary-light: #3949ab;
             --gradient: linear-gradient(135deg, #1a237e, #283593, #3949ab);
-            --secondary: #ff6f00;
+            --gradient-green: linear-gradient(135deg, #1b5e20, #2e7d32);
             --success: #2e7d32;
             --danger: #c62828;
             --warning: #f57c00;
+            --info: #0288d1;
             --text-primary: #1a237e;
             --text-secondary: #455a64;
             --text-light: #78909c;
-            --bg: #f5f7fa;
+            --bg: #f0f2f5;
             --white: #ffffff;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 8px 30px rgba(0, 0, 0, 0.12);
             --radius: 16px;
+            --radius-sm: 10px;
             --transition: all 0.3s ease;
-            --max-width: 1200px;
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
 
         * {
@@ -41,21 +44,538 @@
             box-sizing: border-box;
         }
 
-        html {
-            scroll-behavior: smooth;
-        }
-
         body {
             font-family: 'Segoe UI', 'Poppins', -apple-system, sans-serif;
             background: var(--bg);
             color: var(--text-secondary);
-            overflow-x: hidden;
-            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 80px;
+            -webkit-font-smoothing: antialiased;
         }
 
-        a {
+        /* ============================================================
+           STATUS BAR
+           ============================================================ */
+        .status-bar {
+            padding: 8px 20px 4px;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        /* ============================================================
+           HEADER
+           ============================================================ */
+        .app-header {
+            background: var(--gradient);
+            padding: 16px 20px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            color: white;
+        }
+
+        .app-header .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .app-header .header-top .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .app-header .header-top .brand i {
+            font-size: 24px;
+        }
+
+        .app-header .header-top .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .app-header .header-top .actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .app-header .header-top .actions button {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .app-header .header-top .actions button:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .app-header .header-top .actions .badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--danger);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            min-width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .app-header .user-greeting {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .app-header .user-greeting .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .app-header .user-greeting .greeting-text h2 {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .app-header .user-greeting .greeting-text p {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* ============================================================
+           MAIN CONTENT
+           ============================================================ */
+        .main-content {
+            padding: 20px 16px 80px;
+        }
+
+        /* ============================================================
+           MAX LOAN CARD
+           ============================================================ */
+        .max-loan-card {
+            background: var(--gradient);
+            border-radius: var(--radius);
+            padding: 30px 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 25px rgba(26, 35, 126, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .max-loan-card .card-pattern {
+            position: absolute;
+            right: -30px;
+            top: -30px;
+            font-size: 150px;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        .max-loan-card .card-pattern2 {
+            position: absolute;
+            left: -20px;
+            bottom: -20px;
+            font-size: 100px;
+            opacity: 0.04;
+            pointer-events: none;
+        }
+
+        .max-loan-card .label {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .max-loan-card .amount {
+            font-size: 42px;
+            font-weight: 800;
+            margin: 8px 0 20px;
+            letter-spacing: -1px;
+        }
+
+        .max-loan-card .amount span {
+            font-size: 18px;
+            font-weight: 400;
+            opacity: 0.7;
+        }
+
+        .max-loan-card .btn-apply {
+            background: white;
+            color: var(--primary);
+            padding: 14px 44px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .max-loan-card .btn-apply:active {
+            transform: scale(0.95);
+        }
+
+        .max-loan-card .btn-apply i {
+            font-size: 18px;
+        }
+
+        /* ============================================================
+           TRUST FEATURES
+           ============================================================ */
+        .trust-features {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .trust-features .trust-item {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 16px 10px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+        }
+
+        .trust-features .trust-item:active {
+            transform: scale(0.95);
+        }
+
+        .trust-features .trust-item .icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            font-size: 20px;
+        }
+
+        .trust-features .trust-item .icon.blue {
+            background: #e8eaf6;
+            color: var(--primary);
+        }
+        .trust-features .trust-item .icon.green {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+        .trust-features .trust-item .icon.orange {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+
+        .trust-features .trust-item .label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .trust-features .trust-item .sub-label {
+            font-size: 10px;
+            color: var(--text-light);
+        }
+
+        /* ============================================================
+           QUICK ACTIONS
+           ============================================================ */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .quick-actions .action-item {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 14px 8px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            color: var(--text-secondary);
+        }
+
+        .quick-actions .action-item:active {
+            transform: scale(0.95);
+        }
+
+        .quick-actions .action-item i {
+            font-size: 22px;
+            color: var(--primary);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .quick-actions .action-item span {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           SECTION HEADER
+           ============================================================ */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .section-header h3 {
+            font-size: 16px;
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+
+        .section-header a {
+            color: var(--primary);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        /* ============================================================
+           LOAN LIST
+           ============================================================ */
+        .loan-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .loan-item {
+            background: white;
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            box-shadow: var(--shadow);
+            border-left: 4px solid var(--warning);
+            transition: var(--transition);
+            cursor: pointer;
             text-decoration: none;
             color: inherit;
+        }
+
+        .loan-item:active {
+            transform: scale(0.98);
+        }
+
+        .loan-item.status-approved {
+            border-left-color: var(--success);
+        }
+        .loan-item.status-disbursed {
+            border-left-color: var(--info);
+        }
+        .loan-item.status-rejected {
+            border-left-color: var(--danger);
+        }
+        .loan-item.status-completed {
+            border-left-color: #9e9e9e;
+        }
+
+        .loan-item .loan-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .loan-item .loan-top .loan-info .loan-type {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .loan-item .loan-top .loan-info .loan-id {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        .loan-item .loan-top .loan-status {
+            padding: 3px 12px;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loan-item .loan-top .loan-status.pending {
+            background: #fff3e0;
+            color: var(--warning);
+        }
+        .loan-item .loan-top .loan-status.approved {
+            background: #e8f5e9;
+            color: var(--success);
+        }
+        .loan-item .loan-top .loan-status.disbursed {
+            background: #e3f2fd;
+            color: var(--info);
+        }
+        .loan-item .loan-top .loan-status.rejected {
+            background: #ffebee;
+            color: var(--danger);
+        }
+        .loan-item .loan-top .loan-status.completed {
+            background: #f5f5f5;
+            color: #757575;
+        }
+
+        .loan-item .loan-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loan-item .loan-bottom .loan-amount {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .loan-item .loan-bottom .loan-date {
+            font-size: 11px;
+            color: var(--text-light);
+        }
+
+        /* ============================================================
+           EMPTY STATE
+           ============================================================ */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+
+        .empty-state i {
+            font-size: 56px;
+            color: #e0e0e0;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h4 {
+            color: var(--text-primary);
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .empty-state p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        /* ============================================================
+           BOTTOM NAVIGATION
+           ============================================================ */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 6px 0 calc(6px + var(--safe-bottom));
+            box-shadow: 0 -2px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            border-top: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .bottom-nav .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 10px;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 4px 12px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .bottom-nav .nav-item i {
+            font-size: 20px;
+            margin-bottom: 2px;
+            transition: var(--transition);
+        }
+
+        .bottom-nav .nav-item.active {
+            color: var(--primary);
+        }
+
+        .bottom-nav .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .bottom-nav .nav-item .nav-badge {
+            position: absolute;
+            top: 0;
+            right: 2px;
+            background: var(--danger);
+            color: white;
+            font-size: 9px;
+            font-weight: 700;
+            min-width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .bottom-nav .nav-item .nav-label {
+            font-size: 9px;
         }
 
         /* ============================================================
@@ -63,814 +583,249 @@
            ============================================================ */
         .toast {
             position: fixed;
-            top: 80px;
-            right: 20px;
-            padding: 16px 24px;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-20px);
+            padding: 14px 24px;
             border-radius: 12px;
             color: white;
             font-weight: 500;
             z-index: 9999;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-            transform: translateX(120%);
-            transition: transform 0.4s ease;
-            max-width: 400px;
+            max-width: 360px;
             font-size: 14px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            opacity: 0;
+            transition: all 0.4s ease;
+            pointer-events: none;
         }
 
         .toast.show {
-            transform: translateX(0);
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
+
         .toast.success {
-            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            background: var(--success);
         }
         .toast.error {
-            background: linear-gradient(135deg, #c62828, #b71c1c);
+            background: var(--danger);
         }
         .toast.info {
-            background: linear-gradient(135deg, #0288d1, #01579b);
+            background: var(--primary);
         }
         .toast i {
-            font-size: 20px;
+            font-size: 18px;
         }
 
         /* ============================================================
-           NAVBAR
+           LOADING
            ============================================================ */
-        .navbar {
+        .loader {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 0;
+        }
+
+        .loader i {
+            font-size: 32px;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============================================================
+           DIALOG
+           ============================================================ */
+        .dialog-overlay {
+            display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(12px);
-            padding: 14px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.06);
-            transition: var(--transition);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .navbar .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-        }
-
-        .navbar .brand i {
-            font-size: 30px;
-            color: var(--primary);
-        }
-
-        .navbar .brand h1 {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--primary);
-            letter-spacing: -0.5px;
-        }
-
-        .navbar .brand small {
-            font-size: 10px;
-            opacity: 0.6;
-            font-weight: 400;
-            color: var(--text-secondary);
-        }
-
-        .navbar .nav-links {
-            display: flex;
-            gap: 28px;
-            align-items: center;
-        }
-
-        .navbar .nav-links a {
-            text-decoration: none;
-            color: var(--text-secondary);
-            font-weight: 500;
-            transition: var(--transition);
-            font-size: 14px;
-            position: relative;
-        }
-
-        .navbar .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--primary);
-            transition: var(--transition);
-        }
-
-        .navbar .nav-links a:hover::after,
-        .navbar .nav-links a.active::after {
-            width: 100%;
-        }
-
-        .navbar .nav-links a:hover {
-            color: var(--primary);
-        }
-
-        .navbar .nav-links .btn-primary {
-            background: var(--primary);
-            color: white !important;
-            padding: 10px 28px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(26, 35, 126, 0.3);
-        }
-
-        .navbar .nav-links .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(26, 35, 126, 0.4);
-        }
-
-        .navbar .nav-links .btn-primary::after {
-            display: none;
-        }
-
-        .navbar .nav-links .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary) !important;
-            padding: 8px 24px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .navbar .nav-links .btn-outline:hover {
-            background: var(--primary);
-            color: white !important;
-        }
-
-        .navbar .mobile-toggle {
-            display: none;
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: var(--primary);
-            cursor: pointer;
-            padding: 8px;
-        }
-
-        /* ============================================================
-           HERO
-           ============================================================ */
-        .hero {
-            padding: 140px 30px 80px;
-            max-width: var(--max-width);
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 50px;
-            min-height: 90vh;
-        }
-
-        .hero .content {
-            flex: 1;
-        }
-
-        .hero .content .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #e8eaf6;
-            color: var(--primary);
-            padding: 6px 20px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 24px;
-        }
-
-        .hero .content h1 {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--primary);
-            line-height: 1.12;
-            margin-bottom: 20px;
-        }
-
-        .hero .content h1 span {
-            color: #3949ab;
-            position: relative;
-        }
-
-        .hero .content p {
-            font-size: 18px;
-            color: var(--text-secondary);
-            line-height: 1.8;
-            max-width: 520px;
-            margin-bottom: 32px;
-        }
-
-        .hero .content .cta-buttons {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .hero .content .cta-buttons .btn-primary {
-            background: var(--primary);
-            color: white;
-            padding: 16px 38px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 6px 25px rgba(26, 35, 126, 0.35);
-        }
-
-        .hero .content .cta-buttons .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 35px rgba(26, 35, 126, 0.45);
-        }
-
-        .hero .content .cta-buttons .btn-secondary {
-            background: transparent;
-            color: var(--text-secondary);
-            padding: 16px 38px;
-            border: 2px solid #e0e0e0;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .hero .content .cta-buttons .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-3px);
-        }
-
-        .hero .content .stats-row {
-            display: flex;
-            gap: 50px;
-            margin-top: 45px;
-            padding-top: 35px;
-            border-top: 1px solid #eee;
-        }
-
-        .hero .content .stats-row .stat-item h3 {
-            font-size: 30px;
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .hero .content .stats-row .stat-item p {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-bottom: 0;
-        }
-
-        .hero .image {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-        }
-
-        .hero .image .hero-illustration {
-            width: 100%;
-            max-width: 500px;
-            height: 420px;
-            background: var(--gradient);
-            border-radius: 30px;
-            display: flex;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
             align-items: center;
             justify-content: center;
-            font-size: 140px;
-            color: rgba(255, 255, 255, 0.15);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(26, 35, 126, 0.25);
+            padding: 20px;
+            backdrop-filter: blur(4px);
         }
 
-        .hero .image .hero-illustration .icon-wrapper {
-            position: relative;
-            z-index: 1;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        /* ============================================================
-           LOAN TYPES
-           ============================================================ */
-        .loan-types {
-            padding: 80px 30px;
-            max-width: var(--max-width);
-            margin: 0 auto;
-        }
-
-        .loan-types .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .loan-types .section-header h2 {
-            font-size: 36px;
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .loan-types .section-header p {
-            color: var(--text-secondary);
-            margin-top: 10px;
-            font-size: 18px;
-        }
-
-        .loan-types .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 25px;
-        }
-
-        .loan-types .grid .loan-card {
-            background: var(--white);
-            padding: 30px 25px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            transition: var(--transition);
-            text-align: center;
-            border: 1px solid rgba(0, 0, 0, 0.04);
-            cursor: pointer;
-        }
-
-        .loan-types .grid .loan-card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--primary);
-        }
-
-        .loan-types .grid .loan-card .icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+        .dialog-overlay.show {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 30px;
         }
 
-        .loan-types .grid .loan-card .icon.blue {
-            background: #e8eaf6;
-            color: var(--primary);
-        }
-        .loan-types .grid .loan-card .icon.green {
-            background: #e8f5e9;
-            color: var(--success);
-        }
-        .loan-types .grid .loan-card .icon.orange {
-            background: #fff3e0;
-            color: var(--warning);
-        }
-        .loan-types .grid .loan-card .icon.purple {
-            background: #f3e5f5;
-            color: #7b1fa2;
-        }
-        .loan-types .grid .loan-card .icon.red {
-            background: #ffebee;
-            color: var(--danger);
-        }
-        .loan-types .grid .loan-card .icon.teal {
-            background: #e0f7fa;
-            color: #00897b;
-        }
-
-        .loan-types .grid .loan-card h3 {
-            font-size: 18px;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .loan-types .grid .loan-card p {
-            font-size: 13px;
-            color: var(--text-light);
-        }
-
-        .loan-types .grid .loan-card .rate {
-            display: inline-block;
-            background: #e8eaf6;
-            color: var(--primary);
-            padding: 2px 14px;
-            border-radius: 50px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 8px;
-        }
-
-        /* ============================================================
-           HOW IT WORKS
-           ============================================================ */
-        .how-it-works {
-            padding: 80px 30px;
-            background: var(--white);
-        }
-
-        .how-it-works .container {
-            max-width: var(--max-width);
-            margin: 0 auto;
-        }
-
-        .how-it-works .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .how-it-works .section-header h2 {
-            font-size: 36px;
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .how-it-works .section-header p {
-            color: var(--text-secondary);
-            margin-top: 10px;
-            font-size: 18px;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-        }
-
-        .steps .step {
-            text-align: center;
-        }
-
-        .steps .step .number {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 24px;
-            font-weight: 700;
-            box-shadow: 0 4px 20px rgba(26, 35, 126, 0.25);
-        }
-
-        .steps .step h4 {
-            font-size: 18px;
-            color: var(--primary);
-            margin-bottom: 6px;
-        }
-
-        .steps .step p {
-            font-size: 14px;
-            color: var(--text-secondary);
-        }
-
-        /* ============================================================
-           TESTIMONIALS
-           ============================================================ */
-        .testimonials {
-            padding: 80px 30px;
-            max-width: var(--max-width);
-            margin: 0 auto;
-        }
-
-        .testimonials .section-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .testimonials .section-header h2 {
-            font-size: 36px;
-            color: var(--primary);
-            font-weight: 800;
-        }
-
-        .testimonials .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-
-        .testimonials .grid .testimonial-card {
-            background: var(--white);
-            padding: 30px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .testimonials .grid .testimonial-card .stars {
-            color: #ffb300;
-            font-size: 18px;
-            margin-bottom: 12px;
-            letter-spacing: 2px;
-        }
-
-        .testimonials .grid .testimonial-card .quote {
-            font-size: 15px;
-            line-height: 1.8;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        .testimonials .grid .testimonial-card .author {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-top: 18px;
-            padding-top: 16px;
-            border-top: 1px solid #f0f0f0;
-        }
-
-        .testimonials .grid .testimonial-card .author .avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 700;
-            font-size: 18px;
-        }
-
-        .testimonials .grid .testimonial-card .author .info h4 {
-            font-size: 15px;
-            color: var(--primary);
-        }
-
-        .testimonials .grid .testimonial-card .author .info small {
-            font-size: 12px;
-            color: var(--text-light);
-        }
-
-        /* ============================================================
-           CTA
-           ============================================================ */
-        .cta-section {
-            padding: 80px 30px;
-            background: var(--gradient);
-            color: white;
-            text-align: center;
-        }
-
-        .cta-section h2 {
-            font-size: 38px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .cta-section p {
-            font-size: 18px;
-            opacity: 0.85;
-            margin-bottom: 30px;
-        }
-
-        .cta-section .btn-white {
+        .dialog-box {
             background: white;
-            color: var(--primary);
-            padding: 16px 44px;
-            border: none;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 340px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: dialogIn 0.3s ease;
         }
 
-        .cta-section .btn-white:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25);
+        @keyframes dialogIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
-        /* ============================================================
-           FOOTER
-           ============================================================ */
-        .footer {
-            background: #0d1445;
-            color: rgba(255, 255, 255, 0.85);
-            padding: 60px 30px 25px;
-        }
-
-        .footer .container {
-            max-width: var(--max-width);
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr;
-            gap: 40px;
-        }
-
-        .footer .container .brand h2 {
-            color: white;
-            font-size: 24px;
-            margin-bottom: 12px;
-        }
-
-        .footer .container .brand h2 i {
-            margin-right: 10px;
-        }
-
-        .footer .container .brand p {
-            font-size: 14px;
-            line-height: 1.8;
-            max-width: 320px;
-            opacity: 0.8;
-        }
-
-        .footer .container .brand .social {
-            display: flex;
-            gap: 14px;
-            margin-top: 16px;
-        }
-
-        .footer .container .brand .social a {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.08);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: var(--transition);
-            font-size: 18px;
-        }
-
-        .footer .container .brand .social a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-        }
-
-        .footer .container .col h4 {
-            color: white;
-            font-size: 16px;
+        .dialog-box i {
+            font-size: 48px;
             margin-bottom: 16px;
         }
 
-        .footer .container .col a {
-            display: block;
-            color: rgba(255, 255, 255, 0.7);
-            text-decoration: none;
-            padding: 5px 0;
+        .dialog-box h3 {
+            color: var(--text-primary);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .dialog-box p {
+            color: var(--text-secondary);
             font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .dialog-box .dialog-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dialog-box .dialog-buttons button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
             transition: var(--transition);
+            font-size: 14px;
         }
 
-        .footer .container .col a:hover {
+        .dialog-box .dialog-buttons .btn-cancel {
+            border: 2px solid #e0e0e0;
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .dialog-box .dialog-buttons .btn-cancel:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .dialog-box .dialog-buttons .btn-danger {
+            border: none;
+            background: var(--danger);
             color: white;
-            padding-left: 6px;
         }
 
-        .footer .bottom {
-            max-width: var(--max-width);
-            margin: 30px auto 0;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            font-size: 13px;
-            opacity: 0.7;
+        .dialog-box .dialog-buttons .btn-danger:hover {
+            background: #b71c1c;
         }
 
         /* ============================================================
            RESPONSIVE
            ============================================================ */
-        @media(max-width: 1024px) {
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 120px 20px 60px;
-            }
-
-            .hero .content p {
-                max-width: 100%;
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .hero .content .cta-buttons {
-                justify-content: center;
-            }
-
-            .hero .content .stats-row {
-                justify-content: center;
-            }
-
-            .hero .image .hero-illustration {
-                max-width: 400px;
-                height: 320px;
-                font-size: 100px;
-            }
-        }
-
-        @media(max-width: 768px) {
-            .navbar .nav-links {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 70px;
-                left: 0;
-                right: 0;
-                background: white;
-                padding: 24px;
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-                gap: 16px;
-                border-radius: 0 0 20px 20px;
-            }
-
-            .navbar .nav-links.open {
-                display: flex;
-            }
-
-            .navbar .mobile-toggle {
-                display: block;
-            }
-
-            .hero .content h1 {
+        @media(max-width: 480px) {
+            .max-loan-card .amount {
                 font-size: 32px;
             }
 
-            .hero .content .stats-row {
-                flex-direction: column;
-                gap: 16px;
-                align-items: center;
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
             }
 
-            .loan-types .grid {
-                grid-template-columns: 1fr 1fr;
+            .quick-actions .action-item {
+                padding: 12px 6px;
             }
 
-            .footer .container {
-                grid-template-columns: 1fr 1fr;
+            .quick-actions .action-item i {
+                font-size: 18px;
             }
 
-            .steps {
-                grid-template-columns: 1fr 1fr;
+            .quick-actions .action-item span {
+                font-size: 10px;
+            }
+
+            .trust-features {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .trust-features .trust-item {
+                padding: 12px 8px;
+            }
+
+            .trust-features .trust-item .icon {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+
+            .trust-features .trust-item .label {
+                font-size: 10px;
+            }
+
+            .app-header .user-greeting .greeting-text h2 {
+                font-size: 16px;
+            }
+
+            .bottom-nav .nav-item {
+                padding: 2px 8px;
+            }
+
+            .bottom-nav .nav-item i {
+                font-size: 18px;
             }
         }
 
-        @media(max-width: 480px) {
-            .hero .content h1 {
-                font-size: 26px;
+        @media(max-width: 360px) {
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
             }
 
-            .hero .content .cta-buttons {
-                flex-direction: column;
-                align-items: stretch;
+            .trust-features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(min-width: 768px) {
+            body {
+                max-width: 480px;
+                margin: 0 auto;
+                box-shadow: 0 0 40px rgba(0, 0, 0, 0.1);
+                min-height: 100vh;
             }
 
-            .hero .content .cta-buttons .btn-primary,
-            .hero .content .cta-buttons .btn-secondary {
-                justify-content: center;
+            .bottom-nav {
+                max-width: 480px;
+                left: 50%;
+                transform: translateX(-50%);
             }
 
-            .loan-types .grid {
-                grid-template-columns: 1fr;
+            .toast {
+                max-width: 400px;
+                left: auto;
+                right: 20px;
+                transform: translateX(0) translateY(-20px);
             }
 
-            .footer .container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .footer .container .brand p {
-                max-width: 100%;
-            }
-
-            .footer .container .brand .social {
-                justify-content: center;
-            }
-
-            .steps {
-                grid-template-columns: 1fr;
-            }
-
-            .hero .image .hero-illustration {
-                max-width: 300px;
-                height: 240px;
-                font-size: 72px;
+            .toast.show {
+                transform: translateX(0) translateY(0);
             }
         }
     </style>
@@ -883,276 +838,155 @@
     <div id="toast" class="toast"></div>
 
     <!-- ============================================================
-    NAVBAR
+    LOGOUT DIALOG
     ============================================================ -->
-    <nav class="navbar" id="navbar">
-        <a href="index.html" class="brand">
-            <i class="fa-solid fa-building-columns"></i>
-            <div>
-                <h1>EasyLoan</h1>
-                <small>India's Trusted Lender</small>
+    <div class="dialog-overlay" id="logoutDialog">
+        <div class="dialog-box">
+            <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);"></i>
+            <h3>Logout?</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="dialog-buttons">
+                <button class="btn-cancel" onclick="closeDialog()">Cancel</button>
+                <button class="btn-danger" onclick="confirmLogout()">Logout</button>
             </div>
-        </a>
-
-        <button class="mobile-toggle" id="mobileToggle">
-            <i class="fa-solid fa-bars"></i>
-        </button>
-
-        <div class="nav-links" id="navLinks">
-            <!-- Dynamic -->
         </div>
+    </div>
+
+    <!-- ============================================================
+    STATUS BAR
+    ============================================================ -->
+    <div class="status-bar">
+        <span id="currentTime">12:00</span>
+        <span><i class="fa-solid fa-wifi"></i> <i class="fa-solid fa-signal"></i></span>
+    </div>
+
+    <!-- ============================================================
+    HEADER
+    ============================================================ -->
+    <header class="app-header">
+        <div class="header-top">
+            <div class="brand">
+                <i class="fa-solid fa-building-columns"></i>
+                <h1>EasyLoan</h1>
+            </div>
+            <div class="actions">
+                <button onclick="window.location.href='notifications.html'">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge" id="notifBadge" style="display:none;">0</span>
+                </button>
+                <button onclick="showDialog()">
+                    <i class="fa-solid fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="user-greeting">
+            <div class="avatar" id="userAvatar">U</div>
+            <div class="greeting-text">
+                <h2 id="userName">Welcome back!</h2>
+                <p id="userEmail">user@email.com</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <div class="main-content">
+
+        <!-- Max Loan Card -->
+        <div class="max-loan-card">
+            <div class="card-pattern"><i class="fa-solid fa-coins"></i></div>
+            <div class="card-pattern2"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+            <div class="label">MAXIMUM LOAN AVAILABILITY (₹)</div>
+            <div class="amount" id="maxLoanAmount">₹100,000</div>
+            <a href="apply-loan.html" class="btn-apply">
+                <i class="fa-solid fa-rocket"></i> APPLY NOW
+            </a>
+        </div>
+
+        <!-- Trust Features -->
+        <div class="trust-features">
+            <div class="trust-item">
+                <div class="icon blue"><i class="fa-solid fa-bolt"></i></div>
+                <div class="label">QUICK APPROVAL</div>
+                <div class="sub-label">In 24 hours</div>
+            </div>
+            <div class="trust-item">
+                <div class="icon green"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="label">SAFE & SECURE</div>
+                <div class="sub-label">100% protected</div>
+            </div>
+            <div class="trust-item">
+                <div class="icon orange"><i class="fa-solid fa-file-lines"></i></div>
+                <div class="label">PAPERLESS</div>
+                <div class="sub-label">100% digital</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="apply-loan.html" class="action-item">
+                <i class="fa-solid fa-plus-circle"></i>
+                <span>Apply</span>
+            </a>
+            <a href="my-loans.html" class="action-item">
+                <i class="fa-solid fa-file-invoice"></i>
+                <span>My Loans</span>
+            </a>
+            <a href="profile.html" class="action-item">
+                <i class="fa-solid fa-user-edit"></i>
+                <span>Profile</span>
+            </a>
+            <a href="loan-calculator.html" class="action-item">
+                <i class="fa-solid fa-calculator"></i>
+                <span>Calculator</span>
+            </a>
+        </div>
+
+        <!-- Recent Loans -->
+        <div class="section-header">
+            <h3>📋 Recent Loans</h3>
+            <a href="my-loans.html">View All →</a>
+        </div>
+
+        <div class="loan-list" id="loanList">
+            <div class="loader"><i class="fa-solid fa-spinner"></i> Loading...</div>
+        </div>
+
+    </div>
+
+    <!-- ============================================================
+    BOTTOM NAVIGATION
+    ============================================================ -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="fa-solid fa-house"></i>
+            <span class="nav-label">Home</span>
+        </a>
+        <a href="my-loans.html" class="nav-item">
+            <i class="fa-solid fa-file-invoice"></i>
+            <span class="nav-label">My Loans</span>
+            <span class="nav-badge" id="navPendingBadge" style="display:none;">0</span>
+        </a>
+        <a href="apply-loan.html" class="nav-item" style="position:relative;">
+            <i class="fa-solid fa-plus-circle" style="font-size:28px;color:var(--primary);"></i>
+            <span class="nav-label" style="color:var(--primary);font-weight:700;">Apply</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fa-solid fa-user"></i>
+            <span class="nav-label">Profile</span>
+        </a>
+        <a href="#" class="nav-item" onclick="showDialog()">
+            <i class="fa-solid fa-sign-out-alt"></i>
+            <span class="nav-label">Logout</span>
+        </a>
     </nav>
 
-    <!-- ============================================================
-    HERO
-    ============================================================ -->
-    <section class="hero">
-        <div class="content">
-            <div class="badge">
-                <i class="fa-solid fa-shield-halved"></i> RBI Registered
-            </div>
-            <h1>
-                Get <span>Instant Loan</span><br>
-                Approval in Minutes
-            </h1>
-            <p>
-                Personal, Home, Car, Education & Business loans with minimal
-                documentation and competitive interest rates.
-            </p>
-            <div class="cta-buttons">
-                <a href="apply-loan.html" class="btn-primary">
-                    <i class="fa-solid fa-rocket"></i> Apply Now
-                </a>
-                <a href="#loan-types" class="btn-secondary">
-                    <i class="fa-solid fa-circle-info"></i> Explore Loans
-                </a>
-            </div>
-            <div class="stats-row">
-                <div class="stat-item">
-                    <h3>₹500Cr+</h3>
-                    <p>Disbursed</p>
-                </div>
-                <div class="stat-item">
-                    <h3>50K+</h3>
-                    <p>Happy Customers</p>
-                </div>
-                <div class="stat-item">
-                    <h3>98%</h3>
-                    <p>Approval Rate</p>
-                </div>
-                <div class="stat-item">
-                    <h3>24hrs</h3>
-                    <p>Disbursement</p>
-                </div>
-            </div>
-        </div>
-        <div class="image">
-            <div class="hero-illustration">
-                <div class="icon-wrapper">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-    LOAN TYPES
-    ============================================================ -->
-    <section class="loan-types" id="loan-types">
-        <div class="section-header">
-            <h2>Choose Your Loan</h2>
-            <p>Find the perfect loan for your needs with best-in-class rates</p>
-        </div>
-        <div class="grid">
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon blue"><i class="fa-solid fa-user"></i></div>
-                <h3>Personal Loan</h3>
-                <p>Up to ₹25 Lakhs</p>
-                <span class="rate">10.5% p.a.</span>
-            </div>
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon green"><i class="fa-solid fa-house"></i></div>
-                <h3>Home Loan</h3>
-                <p>Up to ₹5 Crore</p>
-                <span class="rate">8.5% p.a.</span>
-            </div>
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon orange"><i class="fa-solid fa-car"></i></div>
-                <h3>Car Loan</h3>
-                <p>Up to ₹50 Lakhs</p>
-                <span class="rate">9.5% p.a.</span>
-            </div>
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon purple"><i class="fa-solid fa-graduation-cap"></i></div>
-                <h3>Education Loan</h3>
-                <p>Up to ₹50 Lakhs</p>
-                <span class="rate">8.0% p.a.</span>
-            </div>
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon teal"><i class="fa-solid fa-briefcase"></i></div>
-                <h3>Business Loan</h3>
-                <p>Up to ₹2 Crore</p>
-                <span class="rate">11.0% p.a.</span>
-            </div>
-            <div class="loan-card" onclick="window.location.href='apply-loan.html'">
-                <div class="icon red"><i class="fa-solid fa-truck"></i></div>
-                <h3>Two-Wheeler Loan</h3>
-                <p>Up to ₹5 Lakhs</p>
-                <span class="rate">12.0% p.a.</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-    HOW IT WORKS
-    ============================================================ -->
-    <section class="how-it-works">
-        <div class="container">
-            <div class="section-header">
-                <h2>How It Works</h2>
-                <p>Get your loan in 4 simple steps</p>
-            </div>
-            <div class="steps">
-                <div class="step">
-                    <div class="number">1</div>
-                    <h4>📝 Apply Online</h4>
-                    <p>Fill your details & loan requirements in 5 minutes</p>
-                </div>
-                <div class="step">
-                    <div class="number">2</div>
-                    <h4>📄 Upload KYC</h4>
-                    <p>Upload PAN, Aadhaar & Bank Statements</p>
-                </div>
-                <div class="step">
-                    <div class="number">3</div>
-                    <h4>✅ Get Approval</h4>
-                    <p>Our team reviews & approves your application</p>
-                </div>
-                <div class="step">
-                    <div class="number">4</div>
-                    <h4>💰 Receive Funds</h4>
-                    <p>Money credited to your account within 24 hours</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-    TESTIMONIALS
-    ============================================================ -->
-    <section class="testimonials">
-        <div class="section-header">
-            <h2>What Our Customers Say</h2>
-            <p>Real stories from real people</p>
-        </div>
-        <div class="grid">
-            <div class="testimonial-card">
-                <div class="stars">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <p class="quote">"Got my home loan approved in just 6 hours! The process was completely digital and hassle-free."</p>
-                <div class="author">
-                    <div class="avatar">RS</div>
-                    <div class="info">
-                        <h4>Rahul Sharma</h4>
-                        <small>Home Loan, 2024</small>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-card">
-                <div class="stars">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <p class="quote">"Best loan app in India! I got my business loan within 24 hours. The team was very supportive."</p>
-                <div class="author">
-                    <div class="avatar">PM</div>
-                    <div class="info">
-                        <h4>Priya Mehta</h4>
-                        <small>Business Loan, 2024</small>
-                    </div>
-                </div>
-            </div>
-            <div class="testimonial-card">
-                <div class="stars">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                </div>
-                <p class="quote">"Car loan approved in 2 hours! No hidden charges, transparent process. Highly recommended!"</p>
-                <div class="author">
-                    <div class="avatar">AK</div>
-                    <div class="info">
-                        <h4>Amit Kumar</h4>
-                        <small>Car Loan, 2024</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ============================================================
-    CTA
-    ============================================================ -->
-    <section class="cta-section">
-        <h2>Ready to Get Your Loan?</h2>
-        <p>Join 50,000+ happy customers and get the funds you need today.</p>
-        <a href="apply-loan.html" class="btn-white">
-            <i class="fa-solid fa-rocket"></i> Apply Now
-        </a>
-    </section>
-
-    <!-- ============================================================
-    FOOTER
-    ============================================================ -->
-    <footer class="footer">
-        <div class="container">
-            <div class="brand">
-                <h2><i class="fa-solid fa-building-columns"></i> EasyLoan India</h2>
-                <p>Empowering India with fast, transparent, and accessible loan solutions for everyone.</p>
-                <div class="social">
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
-                </div>
-            </div>
-            <div class="col">
-                <h4>Products</h4>
-                <a href="apply-loan.html">Personal Loan</a>
-                <a href="apply-loan.html">Home Loan</a>
-                <a href="apply-loan.html">Car Loan</a>
-                <a href="apply-loan.html">Education Loan</a>
-                <a href="apply-loan.html">Business Loan</a>
-            </div>
-            <div class="col">
-                <h4>Company</h4>
-                <a href="about.html">About Us</a>
-                <a href="contact.html">Contact</a>
-                <a href="faq.html">FAQs</a>
-            </div>
-            <div class="col">
-                <h4>Support</h4>
-                <a href="privacy-policy.html">Privacy Policy</a>
-                <a href="terms.html">Terms & Conditions</a>
-                <a href="contact.html">Help Center</a>
-            </div>
-        </div>
-        <div class="bottom">
-            &copy; 2025 EasyLoan India. All rights reserved. | Made with ❤️ in India
-        </div>
-    </footer>
-
     <script>
+        // ============================================================
+        // FIREBASE CONFIG
+        // ============================================================
         const firebaseConfig = {
             apiKey: "AIzaSyCCSSnvJ1w9CGd68TAy9ZVH9Taw1J0-xdE",
             authDomain: "easyloan-india.firebaseapp.com",
@@ -1164,7 +998,17 @@
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
+        const database = firebase.database();
 
+        // ============================================================
+        // VARIABLES
+        // ============================================================
+        let userLoans = [];
+        let currentUser = null;
+
+        // ============================================================
+        // TOAST
+        // ============================================================
         function showToast(message, type = 'info') {
             const toast = document.getElementById('toast');
             const icons = {
@@ -1175,49 +1019,245 @@
             toast.innerHTML = `<i class="${icons[type] || icons.info}"></i> ${message}`;
             toast.className = 'toast ' + type + ' show';
             clearTimeout(toast._timeout);
-            toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 4000);
+            toast._timeout = setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        document.getElementById('mobileToggle').addEventListener('click', function() {
-            document.getElementById('navLinks').classList.toggle('open');
-        });
+        // ============================================================
+        // TIME
+        // ============================================================
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('currentTime').textContent =
+                now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        }
+        updateTime();
+        setInterval(updateTime, 30000);
 
-        function updateNavbar(user) {
-            const navLinks = document.getElementById('navLinks');
+        // ============================================================
+        // DIALOG
+        // ============================================================
+        function showDialog() {
+            document.getElementById('logoutDialog').classList.add('show');
+        }
 
-            if (user) {
-                navLinks.innerHTML = `
-                    <a href="index.html" class="active">Home</a>
-                    <a href="about.html">About</a>
-                    <a href="dashboard.html" style="color:var(--primary);font-weight:600;">
-                        <i class="fa-solid fa-gauge-high"></i> Dashboard
-                    </a>
-                    <a href="#" id="logoutNavBtn" style="color:var(--danger);font-weight:500;cursor:pointer;">
-                        <i class="fa-solid fa-sign-out-alt"></i> Logout
-                    </a>
-                `;
+        function closeDialog() {
+            document.getElementById('logoutDialog').classList.remove('show');
+        }
 
-                document.getElementById('logoutNavBtn').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    auth.signOut().then(() => {
-                        showToast('✅ Logged out', 'success');
-                        updateNavbar(null);
-                    });
+        function confirmLogout() {
+            closeDialog();
+            auth.signOut().then(() => {
+                showToast('✅ Logged out successfully', 'success');
+                setTimeout(() => { window.location.href = 'login.html'; }, 1000);
+            });
+        }
+
+        // ============================================================
+        // AUTH CHECK - Login/Register ke baad seedha yahan aayega
+        // ============================================================
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            currentUser = user;
+
+            // Load user profile
+            database.ref('users/' + user.uid).once('value')
+                .then((snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const name = data.fullName || 'User';
+                        const initial = name[0].toUpperCase();
+                        document.getElementById('userName').textContent = 'Welcome back, ' + name + '!';
+                        document.getElementById('userEmail').textContent = data.email || user.email;
+                        document.getElementById('userAvatar').textContent = initial;
+                    } else {
+                        document.getElementById('userName').textContent = 'Welcome back!';
+                        document.getElementById('userEmail').textContent = user.email;
+                        document.getElementById('userAvatar').textContent = 'U';
+                    }
                 });
 
+            // Load loans
+            loadUserLoans(user.uid);
+        });
+
+        // ============================================================
+        // LOAD LOANS - REAL DATA
+        // ============================================================
+        function loadUserLoans(uid) {
+            const loanList = document.getElementById('loanList');
+            loanList.innerHTML = '<div class="loader"><i class="fa-solid fa-spinner"></i> Loading...</div>';
+
+            database.ref('loans').orderByChild('userId').equalTo(uid).once('value')
+                .then((snapshot) => {
+                    userLoans = [];
+                    snapshot.forEach((child) => {
+                        const data = child.val();
+                        data.id = child.key;
+                        userLoans.push(data);
+                    });
+
+                    userLoans.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                    // Update max loan amount (highest approved amount)
+                    const maxApproved = userLoans
+                        .filter(l => l.status === 'approved' || l.status === 'disbursed')
+                        .reduce((max, l) => Math.max(max, l.loanAmount || 0), 0);
+
+                    if (maxApproved > 0) {
+                        document.getElementById('maxLoanAmount').textContent = '₹' + maxApproved.toLocaleString();
+                    } else {
+                        document.getElementById('maxLoanAmount').textContent = '₹100,000';
+                    }
+
+                    updateBadges();
+                    renderLoans();
+                })
+                .catch((error) => {
+                    loanList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="fa-solid fa-circle-exclamation" style="color:var(--danger);"></i>
+                            <h4>Error Loading Data</h4>
+                            <p>${error.message}</p>
+                        </div>
+                    `;
+                });
+        }
+
+        // ============================================================
+        // UPDATE BADGES
+        // ============================================================
+        function updateBadges() {
+            const pending = userLoans.filter(l => l.status === 'pending').length;
+
+            if (pending > 0) {
+                document.getElementById('notifBadge').style.display = 'flex';
+                document.getElementById('notifBadge').textContent = pending;
+                document.getElementById('navPendingBadge').style.display = 'flex';
+                document.getElementById('navPendingBadge').textContent = pending;
             } else {
-                navLinks.innerHTML = `
-                    <a href="index.html" class="active">Home</a>
-                    <a href="about.html">About</a>
-                    <a href="contact.html">Contact</a>
-                    <a href="login.html" class="btn-outline">Login</a>
-                    <a href="register.html" class="btn-primary">Get Started</a>
+                document.getElementById('notifBadge').style.display = 'none';
+                document.getElementById('navPendingBadge').style.display = 'none';
+            }
+        }
+
+        // ============================================================
+        // RENDER LOANS
+        // ============================================================
+        function renderLoans() {
+            const container = document.getElementById('loanList');
+            const recent = userLoans.slice(0, 4);
+
+            if (userLoans.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-file-invoice"></i>
+                        <h4>No Loans Yet</h4>
+                        <p>Apply for your first loan and get approved in minutes!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = recent.map(loan => {
+                const statusClass = loan.status || 'pending';
+                const statusLabel = {
+                    'pending': '⏳ Pending',
+                    'approved': '✅ Approved',
+                    'disbursed': '💰 Disbursed',
+                    'rejected': '❌ Rejected',
+                    'completed': '✔️ Completed'
+                } [statusClass] || statusClass;
+
+                const date = loan.createdAt ? new Date(loan.createdAt).toLocaleDateString('en-IN', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }) : 'N/A';
+
+                const loanType = loan.loanType || 'Personal';
+
+                return `
+                    <a href="loan-details.html?id=${loan.id}" class="loan-item status-${statusClass}">
+                        <div class="loan-top">
+                            <div class="loan-info">
+                                <div class="loan-type">${loanType}</div>
+                                <div class="loan-id">#${loan.id ? loan.id.substring(0, 8) : 'N/A'}</div>
+                            </div>
+                            <span class="loan-status ${statusClass}">${statusLabel}</span>
+                        </div>
+                        <div class="loan-bottom">
+                            <span class="loan-amount">₹${(loan.loanAmount || 0).toLocaleString()}</span>
+                            <span class="loan-date">${date}</span>
+                        </div>
+                    </a>
+                `;
+            }).join('');
+
+            if (userLoans.length > 4) {
+                container.innerHTML += `
+                    <a href="my-loans.html" style="text-align:center;padding:12px;color:var(--primary);font-weight:600;text-decoration:none;display:block;background:white;border-radius:var(--radius-sm);box-shadow:var(--shadow);margin-top:4px;">
+                        View All ${userLoans.length} Loans <i class="fa-solid fa-arrow-right"></i>
+                    </a>
                 `;
             }
         }
 
+        // ============================================================
+        // REAL-TIME UPDATES
+        // ============================================================
         auth.onAuthStateChanged((user) => {
-            updateNavbar(user);
+            if (user) {
+                database.ref('loans').orderByChild('userId').equalTo(user.uid).on('value', (snapshot) => {
+                    userLoans = [];
+                    snapshot.forEach((child) => {
+                        const data = child.val();
+                        data.id = child.key;
+                        userLoans.push(data);
+                    });
+                    userLoans.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                    // Update max loan amount
+                    const maxApproved = userLoans
+                        .filter(l => l.status === 'approved' || l.status === 'disbursed')
+                        .reduce((max, l) => Math.max(max, l.loanAmount || 0), 0);
+
+                    if (maxApproved > 0) {
+                        document.getElementById('maxLoanAmount').textContent = '₹' + maxApproved.toLocaleString();
+                    }
+
+                    updateBadges();
+                    renderLoans();
+                });
+            }
+        });
+
+        // ============================================================
+        // PULL TO REFRESH
+        // ============================================================
+        let startY = 0;
+        let isRefreshing = false;
+
+        document.addEventListener('touchstart', (e) => {
+            startY = e.touches[0].pageY;
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            const y = e.touches[0].pageY;
+            const diff = y - startY;
+            if (diff > 80 && window.scrollY === 0 && !isRefreshing) {
+                isRefreshing = true;
+                showToast('🔄 Refreshing...', 'info');
+                if (currentUser) {
+                    loadUserLoans(currentUser.uid);
+                }
+                setTimeout(() => {
+                    isRefreshing = false;
+                }, 2000);
+            }
         });
     </script>
 
